@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
 
       <nav className="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
-        <span className="text-lg font-bold tracking-tight">ContractClear</span>
+        <Logo />
         <div className="flex gap-4 items-center text-sm">
           <Link href="/pricing" className="text-slate-400 hover:text-white">Pricing</Link>
           <Link href="/login" className="text-slate-400 hover:text-white">Log in</Link>
