@@ -13,7 +13,13 @@ const severityDot = {
   low: "bg-green-500",
 };
 
-export function AnalysisReport({ analysis }: { analysis: ContractAnalysis }) {
+export function AnalysisReport({
+  analysis,
+  isPro = false,
+}: {
+  analysis: ContractAnalysis;
+  isPro?: boolean;
+}) {
   return (
     <div className="space-y-8">
 
@@ -106,16 +112,18 @@ export function AnalysisReport({ analysis }: { analysis: ContractAnalysis }) {
         </section>
       )}
 
-      <div className="bg-blue-950 border border-blue-800 rounded-2xl p-6 text-center">
-        <p className="font-semibold mb-1">Need unlimited analyses?</p>
-        <p className="text-slate-400 text-sm mb-4">Get the Pro plan for $19/month.</p>
-        <a
-          href="/pricing"
-          className="inline-block bg-blue-500 hover:bg-blue-400 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
-        >
-          Upgrade to Pro
-        </a>
-      </div>
+      {!isPro && (
+        <div className="bg-blue-950 border border-blue-800 rounded-2xl p-6 text-center">
+          <p className="font-semibold mb-1">Need unlimited analyses?</p>
+          <p className="text-slate-400 text-sm mb-4">Get the Pro plan for $19/month.</p>
+          <a
+            href="/pricing"
+            className="inline-block bg-blue-500 hover:bg-blue-400 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            Upgrade to Pro
+          </a>
+        </div>
+      )}
 
     </div>
   );
