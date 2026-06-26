@@ -82,13 +82,19 @@ function DashboardContent() {
         return;
       }
 
-      if (res.status === 402 || data.error === "NO_CREDITS") {
+      if (res.status === 402 || data.error === "NO_CREDITS" || data.error === "FREE_ANALYSIS_ALREADY_CLAIMED") {
+        if (data.message) setError(data.message);
         router.push("/pricing");
         return;
       }
 
+      if (res.status === 403 && data.error === "EMAIL_NOT_CONFIRMED") {
+        setError(data.message ?? "Confirm your email before analyzing. Check your inbox for the confirmation link.");
+        return;
+      }
+
       if (!res.ok) {
-        setError(data.error ?? "Analysis failed. Please try again.");
+        setError(data.message ?? data.error ?? "Analysis failed. Please try again.");
         return;
       }
 

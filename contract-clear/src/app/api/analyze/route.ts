@@ -1,18 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeContract } from "@/lib/analyzeContract";
+import {
+  EMAIL_NOT_CONFIRMED,
+  FREE_ANALYSIS_ALREADY_CLAIMED,
+  normalizeEmail,
+} from "@/lib/freeAnalysis";
 import { ensureUserProfile } from "@/lib/profile";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+type CreditResult = {
+  is_pro: boolean;
+  plan: string;
+  credits_remaining: number;
+};
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!user.email_confirmed_at) {
+      return NextResponse.json(
+        { error: EMAIL_NOT_CONFIRMED, message: "Confirm your email before analyzing." },
+        { status: 403 }
+      );
     }
 
     const { contractText } = await req.json();
@@ -22,31 +42,48 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminSupabaseClient();
     const profile = await ensureUserProfile(user);
-
     const isPro = profile.plan === "pro";
-    const hasCredits = profile.credits > 0;
+    const usingFreeTierCredit = !isPro && profile.plan === "free";
 
-    if (!isPro && !hasCredits) {
-      return NextResponse.json({ error: "NO_CREDITS" }, { status: 402 });
+    if (usingFreeTierCredit && user.email) {
+      const email = normalizeEmail(user.email);
+      const { data: claim } = await admin
+        .from("free_analysis_claims")
+        .select("user_id")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (claim && claim.user_id !== user.id) {
+        return NextResponse.json(
+          {
+            error: FREE_ANALYSIS_ALREADY_CLAIMED,
+            message: "This email has already used its free analysis.",
+          },
+          { status: 402 }
+        );
+      }
     }
 
-    if (!isPro) {
-      await admin
-        .from("profiles")
-        .update({ credits: profile.credits - 1 })
-        .eq("id", user.id);
+    const { data: creditRows, error: creditError } = await admin.rpc("use_analysis_credit", {
+      p_user_id: user.id,
+    });
+
+    if (creditError) {
+      const code = creditError.message?.includes("NO_CREDITS") ? "NO_CREDITS" : creditError.message;
+      if (code === "NO_CREDITS") {
+        return NextResponse.json({ error: "NO_CREDITS" }, { status: 402 });
+      }
+      throw creditError;
     }
+
+    const credit = (Array.isArray(creditRows) ? creditRows[0] : creditRows) as CreditResult | undefined;
+    const chargedFreeTier = usingFreeTierCredit && !credit?.is_pro;
 
     let result;
     try {
       result = await analyzeContract(contractText);
     } catch (analysisError) {
-      if (!isPro) {
-        await admin
-          .from("profiles")
-          .update({ credits: profile.credits })
-          .eq("id", user.id);
-      }
+      await admin.rpc("restore_analysis_credit", { p_user_id: user.id });
       throw analysisError;
     }
 
@@ -55,6 +92,16 @@ export async function POST(req: NextRequest) {
       contract_text: contractText,
       result,
     });
+
+    if (chargedFreeTier && user.email) {
+      await admin.from("free_analysis_claims").upsert(
+        {
+          email: normalizeEmail(user.email),
+          user_id: user.id,
+        },
+        { onConflict: "email", ignoreDuplicates: true }
+      );
+    }
 
     return NextResponse.json({ result });
   } catch (err: unknown) {
