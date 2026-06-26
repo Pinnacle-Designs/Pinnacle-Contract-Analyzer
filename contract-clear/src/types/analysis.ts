@@ -3,6 +3,8 @@ export type RedFlag = {
   severity: "high" | "medium" | "low";
   explanation: string;
   suggestion: string;
+  /** 2–3 sentence email the user can send to request a change. */
+  negotiationScript?: string;
 };
 
 export type MissingClause = {
@@ -25,5 +27,7 @@ export type ContractAnalysis = {
   missingClauses: MissingClause[];
   negotiationTips: NegotiationTip[];
   overallRiskScore: "low" | "medium" | "high";
+  /** 0–100 numeric risk score for gauge display. */
+  riskScore?: number;
   riskRationale: string;
 };

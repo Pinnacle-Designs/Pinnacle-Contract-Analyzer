@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { RiskScoreGauge, resolveRiskScore } from "@/components/RiskScoreGauge";
 import { ContractAnalysis } from "@/types/analysis";
 
 const riskColors = {
@@ -13,6 +15,26 @@ const severityDot = {
   low: "bg-green-500",
 };
 
+function CopyScriptButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="text-xs text-pinnacle-blue-bright hover:underline mt-2"
+    >
+      {copied ? "Copied to clipboard" : "Copy negotiation email →"}
+    </button>
+  );
+}
+
 export function AnalysisReport({
   analysis,
   isPro = false,
@@ -20,38 +42,40 @@ export function AnalysisReport({
   analysis: ContractAnalysis;
   isPro?: boolean;
 }) {
+  const score = resolveRiskScore(analysis);
+
   return (
     <div className="space-y-8">
-
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Contract type</p>
+      <div className="bg-pinnacle-surface border border-pinnacle-elevated rounded-2xl p-6">
+        <div className="flex flex-wrap justify-between items-start gap-6 mb-4">
+          <div className="flex-1 min-w-[200px]">
+            <p className="text-xs text-pinnacle-muted uppercase tracking-wide mb-1">Contract type</p>
             <p className="text-xl font-bold">{analysis.contractType}</p>
           </div>
-          <div className={`px-3 py-1 rounded-full border text-sm font-medium ${riskColors[analysis.overallRiskScore]}`}>
+          <RiskScoreGauge score={score} />
+          <div className={`px-3 py-1 rounded-full border text-sm font-medium h-fit ${riskColors[analysis.overallRiskScore]}`}>
             {analysis.overallRiskScore.charAt(0).toUpperCase() + analysis.overallRiskScore.slice(1)} risk
           </div>
         </div>
 
         {analysis.partiesInvolved.length > 0 && (
           <div className="mb-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Parties</p>
-            <p className="text-sm text-slate-300">{analysis.partiesInvolved.join(" · ")}</p>
+            <p className="text-xs text-pinnacle-muted uppercase tracking-wide mb-1">Parties</p>
+            <p className="text-sm text-pinnacle-muted">{analysis.partiesInvolved.join(" · ")}</p>
           </div>
         )}
 
-        <p className="text-slate-300 text-sm leading-relaxed">{analysis.summary}</p>
-        <p className="text-slate-500 text-xs mt-3 italic">{analysis.riskRationale}</p>
+        <p className="text-pinnacle-muted text-sm leading-relaxed">{analysis.summary}</p>
+        <p className="text-pinnacle-muted/70 text-xs mt-3 italic">{analysis.riskRationale}</p>
       </div>
 
       {analysis.keyTerms.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold mb-3">Key Terms</h2>
+          <h2 className="text-lg font-semibold mb-3">Key terms</h2>
           <div className="grid grid-cols-2 gap-3">
             {analysis.keyTerms.map((kv) => (
-              <div key={kv.term} className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-                <p className="text-xs text-slate-500 mb-1">{kv.term}</p>
+              <div key={kv.term} className="bg-pinnacle-surface border border-pinnacle-elevated rounded-xl p-4">
+                <p className="text-xs text-pinnacle-muted mb-1">{kv.term}</p>
                 <p className="text-sm font-medium">{kv.value}</p>
               </div>
             ))}
@@ -62,12 +86,12 @@ export function AnalysisReport({
       {analysis.redFlags.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-3">
-            Red Flags
-            <span className="ml-2 text-sm font-normal text-slate-500">({analysis.redFlags.length})</span>
+            Red flags
+            <span className="ml-2 text-sm font-normal text-pinnacle-muted">({analysis.redFlags.length})</span>
           </h2>
           <div className="space-y-3">
             {analysis.redFlags.map((flag, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div key={i} className="bg-pinnacle-surface border border-pinnacle-elevated rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`w-2 h-2 rounded-full flex-shrink-0 ${severityDot[flag.severity]}`} />
                   <p className="text-sm font-medium flex-1">{flag.clause}</p>
@@ -75,8 +99,17 @@ export function AnalysisReport({
                     {flag.severity}
                   </span>
                 </div>
-                <p className="text-slate-300 text-sm mb-3">{flag.explanation}</p>
-                <p className="text-blue-400 text-xs">💡 {flag.suggestion}</p>
+                <p className="text-pinnacle-muted text-sm mb-3">{flag.explanation}</p>
+                <p className="text-pinnacle-blue-bright text-xs">💡 {flag.suggestion}</p>
+                {flag.negotiationScript && (
+                  <div className="mt-4 pt-4 border-t border-pinnacle-elevated">
+                    <p className="text-xs text-pinnacle-muted uppercase tracking-wide mb-2">Negotiation script</p>
+                    <p className="text-sm text-pinnacle-muted font-mono leading-relaxed bg-pinnacle-bg/50 rounded-lg p-3">
+                      {flag.negotiationScript}
+                    </p>
+                    <CopyScriptButton text={flag.negotiationScript} />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -85,13 +118,15 @@ export function AnalysisReport({
 
       {analysis.missingClauses.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold mb-3">Missing Protections</h2>
+          <h2 className="text-lg font-semibold mb-3">Missing protections</h2>
           <div className="space-y-3">
             {analysis.missingClauses.map((clause, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div key={i} className="bg-pinnacle-surface border border-pinnacle-elevated rounded-xl p-5">
                 <p className="text-sm font-medium mb-1">{clause.name}</p>
-                <p className="text-slate-400 text-sm mb-2">{clause.why}</p>
-                <p className="text-slate-500 text-xs italic">Example: &quot;{clause.example}&quot;</p>
+                <p className="text-pinnacle-muted text-sm mb-2">{clause.why}</p>
+                <p className="text-pinnacle-muted/70 text-xs italic font-mono">
+                  Example: &quot;{clause.example}&quot;
+                </p>
               </div>
             ))}
           </div>
@@ -100,12 +135,12 @@ export function AnalysisReport({
 
       {analysis.negotiationTips.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold mb-3">Negotiation Tips</h2>
+          <h2 className="text-lg font-semibold mb-3">Negotiation tips</h2>
           <div className="space-y-3">
             {analysis.negotiationTips.map((tip, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div key={i} className="bg-pinnacle-surface border border-pinnacle-elevated rounded-xl p-5">
                 <p className="text-sm font-medium mb-1">{tip.topic}</p>
-                <p className="text-slate-300 text-sm">{tip.tip}</p>
+                <p className="text-pinnacle-muted text-sm">{tip.tip}</p>
               </div>
             ))}
           </div>
@@ -113,18 +148,17 @@ export function AnalysisReport({
       )}
 
       {!isPro && (
-        <div className="bg-blue-950 border border-blue-800 rounded-2xl p-6 text-center">
+        <div className="bg-pinnacle-blue/10 border border-pinnacle-blue/30 rounded-2xl p-6 text-center">
           <p className="font-semibold mb-1">Need unlimited analyses?</p>
-          <p className="text-slate-400 text-sm mb-4">Get the Pro plan for $19/month.</p>
+          <p className="text-pinnacle-muted text-sm mb-4">Get the Pro plan for $19/month.</p>
           <a
             href="/pricing"
-            className="inline-block bg-blue-500 hover:bg-blue-400 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="inline-block bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Upgrade to Pro
           </a>
         </div>
       )}
-
     </div>
   );
 }

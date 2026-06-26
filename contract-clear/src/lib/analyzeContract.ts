@@ -19,7 +19,8 @@ Analyze the provided contract and return ONLY a valid JSON object — no preambl
     clause: string,
     severity: "high" | "medium" | "low",
     explanation: string,
-    suggestion: string
+    suggestion: string,
+    negotiationScript: string
   }>,
   missingClauses: Array<{
     name: string,
@@ -31,6 +32,7 @@ Analyze the provided contract and return ONLY a valid JSON object — no preambl
     tip: string
   }>,
   overallRiskScore: "low" | "medium" | "high",
+  riskScore: number,
   riskRationale: string
 }
 
@@ -38,10 +40,12 @@ Rules:
 - summary: 3–5 sentences in plain English a non-lawyer can understand. No jargon.
 - keyTerms: extract up to 8 most important terms (payment, duration, termination notice, IP ownership, governing law, etc.)
 - redFlags: flag clauses that are one-sided, unusual, or potentially harmful. Be direct about severity.
+- redFlags[].negotiationScript: 2–3 polite sentences the user can paste into an email to request a change without killing the deal.
 - missingClauses: note important protections absent from the contract (limitation of liability, indemnification, dispute resolution, etc.)
 - negotiationTips: give 3–5 specific, actionable things they could ask to change.
 - overallRiskScore: low = standard fair contract, medium = some concerning terms, high = significantly one-sided or dangerous.
-- If the input does not appear to be a contract, return: { contractType: "Unknown", summary: "The provided text does not appear to be a legal contract. Please paste the full text of a contract.", redFlags: [], missingClauses: [], negotiationTips: [], keyTerms: [], partiesInvolved: [], overallRiskScore: "low", riskRationale: "N/A" }`;
+- riskScore: integer 0–100 aligned with overallRiskScore (low: 10–35, medium: 36–65, high: 66–100).
+- If the input does not appear to be a contract, return: { contractType: "Unknown", summary: "The provided text does not appear to be a legal contract. Please paste the full text of a contract.", redFlags: [], missingClauses: [], negotiationTips: [], keyTerms: [], partiesInvolved: [], overallRiskScore: "low", riskScore: 0, riskRationale: "N/A" }`;
 
   const response = await getAnthropicClient().messages.create({
     model: "claude-sonnet-4-6",

@@ -12,7 +12,7 @@ export default function ProPreviewPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <nav className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
-        <Logo className="h-11 w-auto" />
+        <Logo variant="nav" />
         <div className="flex gap-4 items-center text-sm">
           <span className="text-xs bg-blue-950 border border-blue-700 text-blue-300 px-3 py-1 rounded-full font-medium">
             Pro · Unlimited

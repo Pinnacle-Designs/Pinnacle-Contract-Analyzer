@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "Pinnacle Contract Analyzer";
 export const SITE_SHORT_NAME = "Pinnacle";
+export const PRODUCTION_SITE_URL = "https://pinnaclecontractanalyzer.com";
 export const DEFAULT_TITLE = `${SITE_NAME} — AI Contract Analyzer`;
 export const SITE_DESCRIPTION =
   "Understand any contract in 60 seconds. Paste NDAs, freelance agreements, SaaS terms, or leases and get plain-English red flags, missing clauses, and negotiation tips — no lawyer required.";
@@ -18,12 +19,21 @@ export const SITE_KEYWORDS = [
   "SaaS agreement review",
 ];
 
-/** Canonical marketing domain (GitHub Pages). */
+/** Canonical marketing domain — never localhost in metadata/OG. */
 export function getSiteUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://pinnaclecontractanalyzer.com"
-  );
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || PRODUCTION_SITE_URL;
+
+  if (/localhost|127\.0\.0\.1/i.test(raw)) {
+    return PRODUCTION_SITE_URL;
+  }
+
+  return raw;
+}
+
+/** Absolute URL for Open Graph / Twitter images (always production). */
+export function ogImageUrl(path = "/logo.png"): string {
+  return `${PRODUCTION_SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export function absoluteUrl(path: string): string {
@@ -77,7 +87,7 @@ export function createPageMetadata({
       description,
       images: [
         {
-          url: absoluteUrl("/logo.png"),
+          url: ogImageUrl("/logo.png"),
           width: 1200,
           height: 630,
           alt: SITE_NAME,
@@ -88,7 +98,7 @@ export function createPageMetadata({
       card: "summary_large_image",
       title: pageTitle,
       description,
-      images: [absoluteUrl("/logo.png")],
+      images: [ogImageUrl("/logo.png")],
     },
     category: "technology",
   };

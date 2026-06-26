@@ -23,9 +23,11 @@ export function AppNav() {
 
   return (
     <header className="w-full border-b border-slate-800/60 bg-slate-950/95 backdrop-blur-sm sticky top-0 z-20">
-      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-3 flex justify-between items-center gap-3 min-h-14">
-        <Logo className="h-9 sm:h-10 w-auto max-h-10 object-contain object-left" />
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+        <div className="flex justify-center sm:justify-start w-full sm:w-auto shrink-0">
+          <Logo variant="nav" />
+        </div>
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-1 sm:gap-2 shrink-0 w-full sm:w-auto">
           {links.map(({ href, label }) => (
             <Link
               key={href}

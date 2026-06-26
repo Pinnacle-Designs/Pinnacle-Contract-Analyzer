@@ -19,6 +19,8 @@ export const sampleAnalysis: ContractAnalysis = {
       explanation:
         "Acme can request unlimited revisions without additional pay, which can trap you in endless work.",
       suggestion: "Cap revisions at 2 rounds per milestone, with hourly rate for extras.",
+      negotiationScript:
+        "Hi — I'm excited to move forward. Before signing, could we cap revisions at two rounds per milestone, with additional changes billed at my standard hourly rate? That keeps scope clear for both of us.",
     },
     {
       clause: "Broad indemnification (Section 8)",
@@ -26,6 +28,8 @@ export const sampleAnalysis: ContractAnalysis = {
       explanation:
         "You must cover Acme's legal costs if a third party sues over your work — unusually broad for a freelancer.",
       suggestion: "Limit indemnity to your negligence and cap liability at the contract value.",
+      negotiationScript:
+        "I'd like to narrow the indemnification to claims arising from my negligence or willful misconduct, and cap total liability at the fees paid under this agreement. Happy to discuss wording that works for both sides.",
     },
   ],
   missingClauses: [
@@ -46,6 +50,7 @@ export const sampleAnalysis: ContractAnalysis = {
     },
   ],
   overallRiskScore: "medium",
+  riskScore: 58,
   riskRationale:
     "Several clauses favor the client, but nothing catastrophic. Negotiate revision limits and indemnification before signing.",
 };
