@@ -8,6 +8,8 @@ const stashDir = path.join(root, ".gh-pages-stash");
 
 const toStash = [
   "src/app/api",
+  "src/app/auth",
+  "src/app/account",
   "src/app/dashboard",
   "src/app/login",
   "src/app/signup",
@@ -47,6 +49,10 @@ function restore() {
 process.env.GITHUB_PAGES = "true";
 
 stash();
+
+if (fs.existsSync(path.join(root, ".next"))) {
+  fs.rmSync(path.join(root, ".next"), { recursive: true, force: true });
+}
 
 const build = spawnSync("npm", ["run", "build"], {
   cwd: root,
