@@ -1,0 +1,13 @@
+{
+  "name": "pinnacle-contract-analyzer",
+  "private": true,
+  "scripts": {
+    "build": "npm ci --prefix contract-clear && npm run build --prefix contract-clear",
+    "vercel-build": "npm ci --prefix contract-clear && npm run build --prefix contract-clear"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
+}
