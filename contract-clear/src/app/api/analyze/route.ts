@@ -17,6 +17,37 @@ type CreditResult = {
   credits_remaining: number;
 };
 
+function parseCreditResult(rows: unknown): CreditResult {
+  const credit = Array.isArray(rows) ? rows[0] : rows;
+  if (!credit || typeof credit !== "object") {
+    throw new Error("CREDIT_DEBIT_FAILED");
+  }
+
+  const { is_pro, plan, credits_remaining } = credit as CreditResult;
+  if (
+    typeof is_pro !== "boolean" ||
+    typeof plan !== "string" ||
+    typeof credits_remaining !== "number"
+  ) {
+    throw new Error("CREDIT_DEBIT_FAILED");
+  }
+
+  return { is_pro, plan, credits_remaining };
+}
+
+async function restoreAnalysisCredit(
+  admin: ReturnType<typeof createAdminSupabaseClient>,
+  userId: string
+): Promise<void> {
+  const { error } = await admin.rpc("restore_analysis_credit", { p_user_id: userId });
+  if (error) {
+    console.error("restore_analysis_credit:", error.message);
+    throw new Error(
+      "Analysis failed and your credit could not be automatically restored. Please contact support."
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient();
@@ -76,14 +107,16 @@ export async function POST(req: NextRequest) {
       throw creditError;
     }
 
-    const credit = (Array.isArray(creditRows) ? creditRows[0] : creditRows) as CreditResult | undefined;
-    const chargedFreeTier = usingFreeTierCredit && !credit?.is_pro;
+    const credit = parseCreditResult(creditRows);
+    const chargedFreeTier = credit.plan === "free" && !credit.is_pro;
 
     let result;
     try {
       result = await analyzeContract(contractText);
     } catch (analysisError) {
-      await admin.rpc("restore_analysis_credit", { p_user_id: user.id });
+      if (!credit.is_pro) {
+        await restoreAnalysisCredit(admin, user.id);
+      }
       throw analysisError;
     }
 
@@ -105,7 +138,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ result });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Analysis failed.";
+    const message =
+      err instanceof Error && err.message === "CREDIT_DEBIT_FAILED"
+        ? "Could not verify your account credits. Please try again."
+        : err instanceof Error
+        ? err.message
+        : "Analysis failed.";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
