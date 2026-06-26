@@ -6,10 +6,11 @@ import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { appPath } from "@/lib/app-url";
-import { createPageMetadata } from "@/lib/seo";
+import { createPageMetadata, DEFAULT_TITLE, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
-  title: "Pinnacle Contract Analyzer — Understand Any Contract in 60 Seconds",
+  title: DEFAULT_TITLE,
+  description: SITE_DESCRIPTION,
   path: "/",
 });
 

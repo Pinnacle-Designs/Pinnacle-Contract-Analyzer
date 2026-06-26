@@ -1,32 +1,46 @@
 import { FAQ_ITEMS } from "@/lib/faq";
+import { CONTACT_EMAIL, LEGAL_ENTITY } from "@/lib/legal";
 import { absoluteUrl, ogImageUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
 export function JsonLd() {
+  const siteUrl = absoluteUrl("/");
+  const organizationId = `${siteUrl}#organization`;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        "@id": `${absoluteUrl("/")}#organization`,
-        name: SITE_NAME,
-        url: absoluteUrl("/"),
-        logo: ogImageUrl("/logo.png"),
+        "@id": organizationId,
+        name: LEGAL_ENTITY,
+        url: siteUrl,
+        logo: {
+          "@type": "ImageObject",
+          url: ogImageUrl("/logo.png"),
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: CONTACT_EMAIL,
+          availableLanguage: "English",
+        },
       },
       {
         "@type": "WebSite",
-        "@id": `${absoluteUrl("/")}#website`,
+        "@id": `${siteUrl}#website`,
         name: SITE_NAME,
-        url: absoluteUrl("/"),
+        url: siteUrl,
         description: SITE_DESCRIPTION,
-        publisher: { "@id": `${absoluteUrl("/")}#organization` },
+        inLanguage: "en-US",
+        publisher: { "@id": organizationId },
       },
       {
         "@type": "SoftwareApplication",
-        "@id": `${absoluteUrl("/")}#app`,
+        "@id": `${siteUrl}#app`,
         name: SITE_NAME,
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
-        url: absoluteUrl("/"),
+        url: siteUrl,
         description: SITE_DESCRIPTION,
         offers: [
           {
@@ -34,32 +48,35 @@ export function JsonLd() {
             price: "0",
             priceCurrency: "USD",
             description: "One free contract analysis",
+            url: absoluteUrl("/pricing"),
           },
           {
             "@type": "Offer",
             price: "7",
             priceCurrency: "USD",
             description: "Single contract analysis",
+            url: absoluteUrl("/pricing"),
           },
           {
             "@type": "Offer",
             price: "19",
             priceCurrency: "USD",
-            description: "Pro monthly subscription",
+            description: "Pro monthly subscription — unlimited analyses",
+            url: absoluteUrl("/pricing"),
           },
         ],
         featureList: [
           "AI contract analysis",
-          "Visual risk score",
-          "Red flag detection",
+          "Visual risk score (0–100)",
+          "Red flag detection with severity ratings",
           "Missing clause review",
           "Negotiation scripts",
-          "PDF upload support",
+          "PDF and text upload",
         ],
       },
       {
         "@type": "FAQPage",
-        "@id": `${absoluteUrl("/")}#faq`,
+        "@id": `${siteUrl}#faq`,
         mainEntity: FAQ_ITEMS.map((item) => ({
           "@type": "Question",
           name: item.question,
