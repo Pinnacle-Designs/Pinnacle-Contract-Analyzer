@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:reset": "node -e \"const fs=require('fs'); if(fs.existsSync('.next')) fs.rmSync('.next',{recursive:true,force:true,maxRetries:10,retryDelay:500});\" && next dev",
     "build": "next build",
     "build:gh-pages": "node scripts/build-github-pages.mjs",
     "start": "next start",

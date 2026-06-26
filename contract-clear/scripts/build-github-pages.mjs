@@ -64,7 +64,18 @@ function restore() {
   if (fs.existsSync(stashDir)) fs.rmSync(stashDir, { recursive: true, force: true });
 }
 
+function isDevServerRunning() {
+  return fs.existsSync(path.join(root, ".next", "dev", "lock"));
+}
+
 process.env.GITHUB_PAGES = "true";
+
+if (isDevServerRunning() && !process.env.CI) {
+  console.error(
+    "\nbuild:gh-pages — stop `npm run dev` first (it shares the .next folder).\n"
+  );
+  process.exit(1);
+}
 
 stash();
 

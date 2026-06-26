@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppNav } from "@/components/AppNav";
+import { AnalysisHistory } from "@/components/AnalysisHistory";
 import { ContractAnalysis } from "@/types/analysis";
 import { AnalysisReport } from "@/components/AnalysisReport";
 
@@ -13,7 +14,10 @@ function DashboardContent() {
   const [successBanner, setSuccessBanner] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [credits, setCredits] = useState<number | null>(null);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
+  const [historyLoadingId, setHistoryLoadingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -89,10 +93,41 @@ function DashboardContent() {
       }
 
       setResult(data.result);
+      setHistoryRefresh((n) => n + 1);
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadHistoryItem = async (id: string) => {
+    setError(null);
+    setHistoryLoadingId(id);
+
+    try {
+      const res = await fetch(`/api/analyses/${id}`);
+      const data = await res.json();
+
+      if (res.status === 401) {
+        router.push("/login");
+        return;
+      }
+
+      if (!res.ok) {
+        setError(data.error ?? "Could not load that analysis.");
+        return;
+      }
+
+      setResult(data.result);
+      setContractText("");
+      requestAnimationFrame(() => {
+        reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    } catch {
+      setError("Could not load that analysis.");
+    } finally {
+      setHistoryLoadingId(null);
     }
   };
 
@@ -128,6 +163,12 @@ function DashboardContent() {
           </div>
         ) : null}
       </div>
+
+      {error && (
+        <div className="mb-6 bg-red-950 border border-red-800 rounded-xl p-4">
+          <p className="text-red-300 text-sm">{error}</p>
+        </div>
+      )}
 
       {!result && (
         <div className="space-y-4">
@@ -171,17 +212,11 @@ function DashboardContent() {
               </p>
             </div>
           )}
-
-          {error && (
-            <div className="bg-red-950 border border-red-800 rounded-xl p-4">
-              <p className="text-red-300 text-sm">{error}</p>
-            </div>
-          )}
         </div>
       )}
 
       {result && (
-        <div>
+        <div ref={reportRef}>
           <button
             onClick={() => { setResult(null); setContractText(""); }}
             className="text-slate-400 hover:text-white text-sm mb-6 flex items-center gap-2"
@@ -191,6 +226,18 @@ function DashboardContent() {
           <AnalysisReport analysis={result} isPro={isPro} />
         </div>
       )}
+
+      <section className="mt-12 pt-8 border-t border-slate-800">
+        <h2 className="text-lg font-semibold mb-1">Scan history</h2>
+        <p className="text-slate-500 text-sm mb-4">
+          {isPro ? "Re-open any past report." : "Your saved analyses from this account."}
+        </p>
+        <AnalysisHistory
+          refreshKey={historyRefresh}
+          onSelect={loadHistoryItem}
+          loadingId={historyLoadingId}
+        />
+      </section>
     </div>
   );
 }

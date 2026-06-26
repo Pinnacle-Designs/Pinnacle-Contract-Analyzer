@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
+import { toAnalysisHistoryItem } from "@/lib/analyses";
 import { ensureUserProfile } from "@/lib/profile";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
-import type { AccountData, AnalysisHistoryItem, PaymentHistoryItem } from "@/types/account";
-import type { ContractAnalysis } from "@/types/analysis";
+import type { AccountData, PaymentHistoryItem } from "@/types/account";
 
 export const dynamic = "force-dynamic";
-
-function previewText(text: string, max = 140): string {
-  const trimmed = text.replace(/\s+/g, " ").trim();
-  return trimmed.length <= max ? trimmed : `${trimmed.slice(0, max)}…`;
-}
 
 async function getPaymentHistory(customerId: string): Promise<PaymentHistoryItem[]> {
   const stripe = getStripe();
@@ -76,17 +71,7 @@ export async function GET() {
       console.error("analyses fetch:", analysesError.message);
     }
 
-    const analyses: AnalysisHistoryItem[] = (analysesRows ?? []).map((row) => {
-      const result = row.result as ContractAnalysis;
-      return {
-        id: row.id,
-        createdAt: row.created_at,
-        contractPreview: previewText(row.contract_text),
-        contractType: result?.contractType ?? "Unknown",
-        overallRiskScore: result?.overallRiskScore ?? "medium",
-        summary: result?.summary ?? "",
-      };
-    });
+    const analyses = (analysesRows ?? []).map(toAnalysisHistoryItem);
 
     let payments: PaymentHistoryItem[] = [];
     if (profile.stripe_customer_id) {
