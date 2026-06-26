@@ -2,6 +2,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { appPath } from "@/lib/app-url";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -15,16 +16,7 @@ export default function LandingPage() {
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
       <JsonLd />
 
-      <nav className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
-        <Logo className="h-14 w-auto" />
-        <div className="flex gap-4 items-center text-sm">
-          <Link href="/pricing" className="text-slate-400 hover:text-white">Pricing</Link>
-          <Link href={appPath("/login")} className="text-slate-400 hover:text-white">Log in</Link>
-          <Link href={appPath("/signup")} className="bg-white text-slate-950 px-4 py-2 rounded-lg font-medium hover:bg-slate-100">
-            Try free
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <section className="relative max-w-6xl mx-auto px-6 pt-14 pb-20">
         <div

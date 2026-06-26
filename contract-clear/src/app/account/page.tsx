@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
+import { TwoFactorSettings } from "@/components/TwoFactorSettings";
 import type { AccountData } from "@/types/account";
 
 const planLabels: Record<string, string> = {
@@ -104,6 +105,8 @@ export default function AccountPage() {
                 </div>
               </dl>
             </section>
+
+            <TwoFactorSettings />
 
             <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-4">

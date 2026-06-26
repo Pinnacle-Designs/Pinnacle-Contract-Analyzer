@@ -21,7 +21,30 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user && (request.nextUrl.pathname.startsWith("/dashboard") || request.nextUrl.pathname.startsWith("/account"))) {
+  const pathname = request.nextUrl.pathname;
+  const isProtected =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/account");
+  const isMfaPage = pathname === "/login/mfa";
+
+  if (isMfaPage) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel === "aal2") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    return response;
+  }
+
+  if (user && isProtected) {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+      return NextResponse.redirect(new URL("/login/mfa", request.url));
+    }
+  }
+
+  if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -29,5 +52,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/account/:path*"],
+  matcher: ["/dashboard/:path*", "/account/:path*", "/login/mfa"],
 };

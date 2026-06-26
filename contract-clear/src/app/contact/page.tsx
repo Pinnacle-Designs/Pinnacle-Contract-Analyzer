@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { CONTACT_EMAIL, LEGAL_ENTITY } from "@/lib/legal";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -13,12 +12,7 @@ export const metadata = createPageMetadata({
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <nav className="max-w-3xl mx-auto w-full px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
-        <Logo className="h-10 w-auto" />
-        <Link href="/" className="text-slate-400 hover:text-white text-sm">
-          ← Home
-        </Link>
-      </nav>
+      <SiteHeader variant="minimal" />
 
       <div className="max-w-3xl mx-auto w-full px-6 py-12 flex-1">
         <h1 className="text-3xl font-bold mb-3">Contact us</h1>

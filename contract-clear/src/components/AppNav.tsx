@@ -22,10 +22,10 @@ export function AppNav() {
   };
 
   return (
-    <nav className="border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-10">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center gap-4">
-        <Logo className="h-10 w-auto" />
-        <div className="flex items-center gap-1 sm:gap-2">
+    <header className="w-full border-b border-slate-800/60 bg-slate-950/95 backdrop-blur-sm sticky top-0 z-20">
+      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-3 flex justify-between items-center gap-3 min-h-14">
+        <Logo className="h-9 sm:h-10 w-auto max-h-10 object-contain object-left" />
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -47,6 +47,6 @@ export function AppNav() {
           </button>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

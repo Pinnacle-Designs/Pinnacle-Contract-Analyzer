@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { EFFECTIVE_DATE } from "@/lib/legal";
 
 type Section = {
@@ -18,12 +18,7 @@ type LegalLayoutProps = {
 export function LegalLayout({ title, description, sections }: LegalLayoutProps) {
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <nav className="max-w-3xl mx-auto w-full px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
-        <Logo className="h-10 w-auto" />
-        <Link href="/" className="text-slate-400 hover:text-white text-sm">
-          ← Home
-        </Link>
-      </nav>
+      <SiteHeader variant="minimal" />
 
       <article className="max-w-3xl mx-auto w-full px-6 py-12 flex-1">
         <header className="mb-10">

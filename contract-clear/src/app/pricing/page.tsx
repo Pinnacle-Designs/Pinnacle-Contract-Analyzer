@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { appPath, isStaticMarketingSite } from "@/lib/app-url";
 
 const plans = [
@@ -91,7 +92,8 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <div className="max-w-4xl mx-auto px-6 py-20 flex-1 w-full">
+      <SiteHeader />
+      <div className="max-w-4xl mx-auto px-6 py-12 sm:py-20 flex-1 w-full">
         <h1 className="text-3xl font-bold text-center mb-2">Simple pricing</h1>
         <p className="text-slate-400 text-center mb-12">
           Cheaper than one hour of a lawyer&apos;s time.

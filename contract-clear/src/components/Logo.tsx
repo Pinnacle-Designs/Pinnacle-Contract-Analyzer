@@ -12,7 +12,7 @@ export function Logo({ className = "h-14 w-auto", linked = true }: LogoProps) {
     <img
       src={assetPath("/logo.png")}
       alt="Pinnacle Contract Analyzer"
-      className={`block bg-transparent ${className}`}
+      className={`block object-contain object-left bg-transparent ${className}`}
       draggable={false}
     />
   );

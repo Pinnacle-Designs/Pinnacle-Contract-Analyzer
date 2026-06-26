@@ -13,6 +13,8 @@ const toStash = [
   "src/app/dashboard",
   "src/app/login",
   "src/app/signup",
+  "src/app/forgot-password",
+  "src/app/reset-password",
   "src/app/preview",
   "src/middleware.ts",
 ];
