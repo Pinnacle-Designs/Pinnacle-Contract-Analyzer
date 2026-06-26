@@ -24,6 +24,22 @@ function copyPath(src, dest) {
   fs.cpSync(src, dest, { recursive: true });
 }
 
+function removeDirSafe(dir) {
+  if (!fs.existsSync(dir)) return;
+  try {
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 });
+  } catch {
+    spawnSync(
+      process.platform === "win32" ? "cmd" : "sh",
+      [
+        process.platform === "win32" ? "/c" : "-c",
+        process.platform === "win32" ? `rmdir /s /q "${dir}"` : `rm -rf "${dir}"`,
+      ],
+      { stdio: "ignore", shell: false }
+    );
+  }
+}
+
 function stash() {
   if (fs.existsSync(stashDir)) fs.rmSync(stashDir, { recursive: true, force: true });
   fs.mkdirSync(stashDir, { recursive: true });
@@ -52,17 +68,20 @@ process.env.GITHUB_PAGES = "true";
 
 stash();
 
-if (fs.existsSync(path.join(root, ".next"))) {
-  fs.rmSync(path.join(root, ".next"), { recursive: true, force: true });
+let exitCode = 1;
+try {
+  removeDirSafe(path.join(root, ".next"));
+
+  const build = spawnSync("npm", ["run", "build"], {
+    cwd: root,
+    stdio: "inherit",
+    env: process.env,
+    shell: true,
+  });
+
+  exitCode = build.status ?? 1;
+} finally {
+  restore();
 }
 
-const build = spawnSync("npm", ["run", "build"], {
-  cwd: root,
-  stdio: "inherit",
-  env: process.env,
-  shell: true,
-});
-
-restore();
-
-process.exit(build.status ?? 1);
+process.exit(exitCode);

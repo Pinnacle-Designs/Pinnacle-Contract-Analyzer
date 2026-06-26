@@ -134,7 +134,7 @@ export default function PricingPage() {
     <main className="min-h-screen bg-pinnacle-bg text-white flex flex-col">
       <SiteHeader />
 
-      <div className="max-w-5xl mx-auto px-6 py-12 sm:py-16 flex-1 w-full">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 flex-1 w-full">
         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2">Simple pricing</h1>
         <p className="text-pinnacle-muted text-center mb-2">
           Cheaper than one hour of a lawyer&apos;s time.

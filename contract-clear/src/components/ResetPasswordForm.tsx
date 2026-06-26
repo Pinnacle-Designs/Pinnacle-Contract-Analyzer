@@ -42,8 +42,8 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-8">
+    <main className="min-h-screen bg-pinnacle-bg flex items-center justify-center px-4 py-8 sm:py-12">
+      <div className="w-full max-w-sm bg-pinnacle-surface border border-pinnacle-elevated rounded-2xl p-6 sm:p-8">
         <h1 className="text-xl font-bold mb-2 text-white">Choose a new password</h1>
         <p className="text-slate-400 text-sm mb-6">
           Enter a new password for your account.

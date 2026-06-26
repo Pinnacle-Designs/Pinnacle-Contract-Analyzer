@@ -72,7 +72,7 @@ export function AnalysisReport({
       {analysis.keyTerms.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-3">Key terms</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {analysis.keyTerms.map((kv) => (
               <div key={kv.term} className="bg-pinnacle-surface border border-pinnacle-elevated rounded-xl p-4">
                 <p className="text-xs text-pinnacle-muted mb-1">{kv.term}</p>

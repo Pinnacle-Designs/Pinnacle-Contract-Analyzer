@@ -30,6 +30,19 @@ body {
   background: var(--pinnacle-bg);
   color: var(--pinnacle-text);
   font-family: Inter, system-ui, -apple-system, sans-serif;
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 @keyframes scan-line {

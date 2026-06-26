@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 type Props = { mode: "login" | "signup" };
 
 const inputClass =
-  "w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full bg-pinnacle-elevated border border-pinnacle-elevated rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-pinnacle-blue";
 
 export function AuthForm({ mode }: Props) {
   const [email, setEmail] = useState("");
@@ -59,8 +59,8 @@ export function AuthForm({ mode }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-8">
+    <main className="min-h-screen bg-pinnacle-bg flex items-center justify-center px-4 py-8 sm:py-12">
+      <div className="w-full max-w-sm bg-pinnacle-surface border border-pinnacle-elevated rounded-2xl p-6 sm:p-8">
         {mfaStep ? (
           <>
             <h1 className="text-xl font-bold mb-6 text-white">Two-factor authentication</h1>
@@ -108,7 +108,7 @@ export function AuthForm({ mode }: Props) {
               <button
                 onClick={handleSubmit}
                 disabled={loading || !email || !password}
-                className="w-full bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium text-sm transition-colors"
+                className="w-full bg-pinnacle-blue hover:bg-pinnacle-blue-bright disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium text-sm transition-colors"
               >
                 {loading
                   ? "…"

@@ -11,7 +11,7 @@ export default function AnalyzePreviewPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <nav className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
-        <Logo variant="nav" />
+        <Logo variant="compact" />
         <div className="flex gap-4 items-center text-sm">
           <span className="text-xs bg-amber-950 border border-amber-800 text-amber-300 px-3 py-1 rounded-full">
             Test mode

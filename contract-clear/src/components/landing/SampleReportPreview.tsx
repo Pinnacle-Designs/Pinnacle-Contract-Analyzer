@@ -75,10 +75,10 @@ export function SampleReportPreview() {
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-pinnacle-bg via-pinnacle-bg/90 to-transparent flex items-end justify-center pb-8">
+        <div className="absolute inset-x-0 bottom-0 h-40 sm:h-48 bg-gradient-to-t from-pinnacle-bg via-pinnacle-bg/90 to-transparent flex items-end justify-center pb-6 sm:pb-8 px-4">
           <Link
             href={appPath("/signup")}
-            className="bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-lg"
+            className="w-full sm:w-auto text-center bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-lg"
           >
             See your full report — analyze free →
           </Link>

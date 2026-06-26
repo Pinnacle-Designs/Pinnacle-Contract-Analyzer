@@ -27,23 +27,26 @@ export function SiteHeader({ variant = "marketing" }: SiteHeaderProps) {
           : "border-b border-transparent bg-pinnacle-bg/80"
       }`}
     >
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
-        <div className="flex justify-center sm:justify-start w-full sm:w-auto shrink-0">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-3 sm:py-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+        <div className="flex justify-center lg:justify-start w-full lg:w-auto lg:flex-1 lg:min-w-0 shrink-0">
           <Logo variant="nav" />
         </div>
 
         {variant === "minimal" ? (
           <Link
             href="/"
-            className="text-pinnacle-muted hover:text-white text-sm whitespace-nowrap shrink-0 self-center sm:self-auto"
+            className="text-pinnacle-muted hover:text-white text-sm whitespace-nowrap shrink-0 self-center lg:self-auto"
           >
             ← Home
           </Link>
         ) : (
-          <nav className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3 text-sm shrink-0 w-full sm:w-auto">
+          <nav
+            className="flex flex-wrap items-center justify-center lg:justify-end gap-x-2 gap-y-2 sm:gap-3 text-sm shrink-0 w-full lg:w-auto"
+            aria-label="Main"
+          >
             <Link
               href="/#how-it-works"
-              className="text-pinnacle-muted hover:text-white px-2 py-1.5 hidden sm:inline"
+              className="text-pinnacle-muted hover:text-white px-2 py-1.5 hidden md:inline"
             >
               How it works
             </Link>
@@ -55,9 +58,10 @@ export function SiteHeader({ variant = "marketing" }: SiteHeaderProps) {
             </Link>
             <Link
               href={appPath("/signup")}
-              className="bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium whitespace-nowrap transition-colors"
+              className="bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white px-3 sm:px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors text-center"
             >
-              Try free — it&apos;s $0
+              <span className="sm:hidden">Try free</span>
+              <span className="hidden sm:inline">Try free — it&apos;s $0</span>
             </Link>
           </nav>
         )}

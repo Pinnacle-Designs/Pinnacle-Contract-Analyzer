@@ -22,32 +22,36 @@ export function AppNav() {
   };
 
   return (
-    <header className="w-full border-b border-slate-800/60 bg-slate-950/95 backdrop-blur-sm sticky top-0 z-20">
-      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
-        <div className="flex justify-center sm:justify-start w-full sm:w-auto shrink-0">
+    <header className="w-full border-b border-pinnacle-elevated/80 bg-pinnacle-bg/95 backdrop-blur-sm sticky top-0 z-20">
+      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex justify-center sm:justify-start w-full sm:w-auto sm:flex-1 sm:min-w-0">
           <Logo variant="nav" />
         </div>
-        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-1 sm:gap-2 shrink-0 w-full sm:w-auto">
+        <nav
+          className="flex flex-wrap items-center justify-center sm:justify-end gap-1 sm:gap-2 shrink-0 w-full sm:w-auto"
+          aria-label="App"
+        >
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                 pathname === href || pathname.startsWith(`${href}/`)
-                  ? "bg-slate-800 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900"
+                  ? "bg-pinnacle-elevated text-white"
+                  : "text-pinnacle-muted hover:text-white hover:bg-pinnacle-surface"
               }`}
             >
               {label}
             </Link>
           ))}
           <button
+            type="button"
             onClick={handleLogout}
-            className="px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-900 transition-colors"
+            className="px-3 py-2 rounded-lg text-sm text-pinnacle-muted hover:text-white hover:bg-pinnacle-surface transition-colors"
           >
             Log out
           </button>
-        </div>
+        </nav>
       </div>
     </header>
   );

@@ -97,7 +97,7 @@ export default function LandingPage() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="text-center md:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-5 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-5 tracking-tight">
               Understand any contract
               <br />
               <span className="text-pinnacle-blue-bright">in 60 seconds.</span>
@@ -109,7 +109,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center md:items-start gap-4">
               <Link
                 href={appPath("/signup")}
-                className="inline-block bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white text-lg px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg shadow-pinnacle-blue/20"
+                className="inline-block w-full sm:w-auto text-center bg-pinnacle-blue hover:bg-pinnacle-blue-bright text-white text-base sm:text-lg px-6 sm:px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg shadow-pinnacle-blue/20"
               >
                 Analyze your first contract free →
               </Link>
@@ -131,7 +131,7 @@ export default function LandingPage() {
 
       {/* Social proof — no fabricated user counts or star ratings */}
       <section className="border-y border-pinnacle-elevated/60 bg-pinnacle-surface/50">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <p className="text-center text-pinnacle-muted text-sm mb-8">
             Built for freelancers, founders, and small teams who sign contracts every week
           </p>
