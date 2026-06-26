@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { appPath } from "@/lib/app-url";
 
 export default function LandingPage() {
   return (
@@ -9,8 +10,8 @@ export default function LandingPage() {
         <Logo className="h-14 w-auto" />
         <div className="flex gap-4 items-center text-sm">
           <Link href="/pricing" className="text-slate-400 hover:text-white">Pricing</Link>
-          <Link href="/login" className="text-slate-400 hover:text-white">Log in</Link>
-          <Link href="/signup" className="bg-white text-slate-950 px-4 py-2 rounded-lg font-medium hover:bg-slate-100">
+          <Link href={appPath("/login")} className="text-slate-400 hover:text-white">Log in</Link>
+          <Link href={appPath("/signup")} className="bg-white text-slate-950 px-4 py-2 rounded-lg font-medium hover:bg-slate-100">
             Try free
           </Link>
         </div>
@@ -34,7 +35,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col items-center md:items-start gap-4">
               <Link
-                href="/signup"
+                href={appPath("/signup")}
                 className="inline-block bg-blue-500 hover:bg-blue-400 text-white text-lg px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg shadow-blue-500/20"
               >
                 Analyze your first contract free →

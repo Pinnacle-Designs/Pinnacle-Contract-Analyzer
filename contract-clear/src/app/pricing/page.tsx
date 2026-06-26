@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { appPath, isStaticMarketingSite } from "@/lib/app-url";
 
 const plans = [
   {
@@ -37,7 +38,15 @@ const plans = [
   },
 ];
 
+const buttonClass = (highlighted: boolean) =>
+  `w-full py-3 rounded-xl font-medium text-sm transition-colors disabled:opacity-50 ${
+    highlighted
+      ? "bg-blue-500 hover:bg-blue-400 text-white"
+      : "bg-slate-800 hover:bg-slate-700 text-white"
+  }`;
+
 export default function PricingPage() {
+  const staticSite = isStaticMarketingSite();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,17 +129,19 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <button
-                onClick={() => handleCheckout(plan.priceId, plan.mode)}
-                disabled={loading === plan.priceId}
-                className={`w-full py-3 rounded-xl font-medium text-sm transition-colors disabled:opacity-50 ${
-                  plan.highlighted
-                    ? "bg-blue-500 hover:bg-blue-400 text-white"
-                    : "bg-slate-800 hover:bg-slate-700 text-white"
-                }`}
-              >
-                {loading === plan.priceId ? "Redirecting…" : plan.cta}
-              </button>
+              {staticSite ? (
+                <a href={appPath("/pricing")} className={`block text-center ${buttonClass(plan.highlighted)}`}>
+                  {plan.cta} →
+                </a>
+              ) : (
+                <button
+                  onClick={() => handleCheckout(plan.priceId, plan.mode)}
+                  disabled={loading === plan.priceId}
+                  className={buttonClass(plan.highlighted)}
+                >
+                  {loading === plan.priceId ? "Redirecting…" : plan.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>
