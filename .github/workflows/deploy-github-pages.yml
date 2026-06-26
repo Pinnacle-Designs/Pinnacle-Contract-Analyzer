@@ -6,16 +6,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,30 +28,24 @@ jobs:
         working-directory: contract-clear
         env:
           GITHUB_PAGES: "true"
-          # Empty base path — custom domain serves from apex (pinnaclecontractanalyzer.com)
           GITHUB_PAGES_BASE_PATH: ""
           NEXT_PUBLIC_BASE_PATH: ""
           NEXT_PUBLIC_SITE_URL: https://pinnaclecontractanalyzer.com
           NEXT_PUBLIC_APP_URL: https://pinnacle-contract-analyzer.vercel.app
         run: npm ci && npm run build:gh-pages
 
-      - name: Verify Pages artifact
+      - name: Verify build output
         run: |
           test -f contract-clear/out/index.html
           test -f contract-clear/out/CNAME
+          test -f contract-clear/out/.nojekyll
           test -f contract-clear/out/sitemap.xml
-          echo "CNAME in artifact:" && cat contract-clear/out/CNAME
+          echo "Build OK — $(wc -c < contract-clear/out/index.html) byte index.html"
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: contract-clear/out
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: contract-clear/out
+          publish_branch: gh-pages
+          force_orphan: true
