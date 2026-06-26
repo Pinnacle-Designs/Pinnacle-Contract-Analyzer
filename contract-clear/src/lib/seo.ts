@@ -98,4 +98,9 @@ export function createPageMetadata({
 export const SITEMAP_ROUTES: { path: string; changeFrequency: "weekly" | "monthly"; priority: number }[] = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/pricing", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/terms", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/privacy", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/disclaimer", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/cookies", changeFrequency: "monthly", priority: 0.4 },
+  { path: "/contact", changeFrequency: "monthly", priority: 0.4 },
 ];

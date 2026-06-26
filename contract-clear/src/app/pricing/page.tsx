@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
+import { SiteFooter } from "@/components/SiteFooter";
 import { appPath, isStaticMarketingSite } from "@/lib/app-url";
 
 const plans = [
@@ -88,8 +90,8 @@ export default function PricingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <div className="max-w-4xl mx-auto px-6 py-20">
+    <main className="min-h-screen bg-slate-950 text-white flex flex-col">
+      <div className="max-w-4xl mx-auto px-6 py-20 flex-1 w-full">
         <h1 className="text-3xl font-bold text-center mb-2">Simple pricing</h1>
         <p className="text-slate-400 text-center mb-12">
           Cheaper than one hour of a lawyer&apos;s time.
@@ -145,7 +147,16 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+
+        <p className="text-center text-slate-600 text-xs mt-10 max-w-md mx-auto">
+          By purchasing, you agree to our{" "}
+          <Link href="/terms" className="text-slate-500 hover:text-slate-400 underline">Terms</Link>
+          {" "}and{" "}
+          <Link href="/privacy" className="text-slate-500 hover:text-slate-400 underline">Privacy Policy</Link>.
+          Subscriptions renew until canceled.
+        </p>
       </div>
+      <SiteFooter />
     </main>
   );
 }

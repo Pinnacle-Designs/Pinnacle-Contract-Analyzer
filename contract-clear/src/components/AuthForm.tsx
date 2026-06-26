@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuthCallbackUrl } from "@/lib/auth";
@@ -61,6 +62,16 @@ export function AuthForm({ mode }: Props) {
             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}
+          {mode === "signup" && (
+            <p className="text-slate-500 text-xs leading-relaxed">
+              By creating an account, you agree to our{" "}
+              <Link href="/terms" className="text-blue-400 hover:underline">Terms of Service</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="text-blue-400 hover:underline">Privacy Policy</Link>
+              , and acknowledge our{" "}
+              <Link href="/disclaimer" className="text-blue-400 hover:underline">Disclaimer</Link>.
+            </p>
+          )}
           <button
             onClick={handleSubmit}
             disabled={loading || !email || !password}

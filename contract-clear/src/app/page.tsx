@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { Logo } from "@/components/Logo";
+import { SiteFooter } from "@/components/SiteFooter";
 import { appPath } from "@/lib/app-url";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -11,7 +12,7 @@ export const metadata = createPageMetadata({
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-slate-950 text-white flex flex-col">
       <JsonLd />
 
       <nav className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
@@ -49,6 +50,13 @@ export default function LandingPage() {
                 Analyze your first contract free →
               </Link>
               <p className="text-slate-500 text-sm">No credit card required · 1 free analysis</p>
+              <p className="text-slate-600 text-xs max-w-sm">
+                Not legal advice.{" "}
+                <Link href="/disclaimer" className="text-slate-500 hover:text-slate-400 underline">
+                  Read our disclaimer
+                </Link>
+                .
+              </p>
             </div>
           </div>
 
@@ -92,6 +100,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <SiteFooter />
     </main>
   );
 }
