@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AppNav } from "@/components/AppNav";
 import { ContractAnalysis } from "@/types/analysis";
 import { AnalysisReport } from "@/components/AnalysisReport";
 
@@ -197,6 +198,7 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      <AppNav />
       <Suspense fallback={
         <div className="max-w-3xl mx-auto px-4 py-12">
           <p className="text-slate-400 text-sm">Loading…</p>
