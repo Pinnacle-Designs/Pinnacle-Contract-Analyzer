@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeContract } from "@/lib/analyzeContract";
+import { ensureUserProfile } from "@/lib/profile";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -20,16 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createAdminSupabaseClient();
-
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("plan, credits")
-      .eq("id", user.id)
-      .single();
-
-    if (!profile) {
-      return NextResponse.json({ error: "Profile not found." }, { status: 404 });
-    }
+    const profile = await ensureUserProfile(user);
 
     const isPro = profile.plan === "pro";
     const hasCredits = profile.credits > 0;

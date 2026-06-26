@@ -45,7 +45,10 @@ export default function AccountPage() {
           window.location.href = "/login";
           return null;
         }
-        if (!res.ok) throw new Error("Failed to load account.");
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error ?? "Failed to load account.");
+        }
         return res.json() as Promise<AccountData>;
       })
       .then((json) => {

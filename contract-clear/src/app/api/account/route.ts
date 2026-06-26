@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
+import { ensureUserProfile } from "@/lib/profile";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
 import type { AccountData, AnalysisHistoryItem, PaymentHistoryItem } from "@/types/account";
 import type { ContractAnalysis } from "@/types/analysis";
@@ -51,67 +52,68 @@ async function getPaymentHistory(customerId: string): Promise<PaymentHistoryItem
 }
 
 export async function GET() {
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const admin = createAdminSupabaseClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("email, plan, credits, stripe_customer_id, created_at")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) {
-    return NextResponse.json({ error: "Profile not found." }, { status: 404 });
-  }
-
-  const { data: analysesRows } = await admin
-    .from("analyses")
-    .select("id, created_at, contract_text, result")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  const analyses: AnalysisHistoryItem[] = (analysesRows ?? []).map((row) => {
-    const result = row.result as ContractAnalysis;
-    return {
-      id: row.id,
-      createdAt: row.created_at,
-      contractPreview: previewText(row.contract_text),
-      contractType: result?.contractType ?? "Unknown",
-      overallRiskScore: result?.overallRiskScore ?? "medium",
-      summary: result?.summary ?? "",
-    };
-  });
-
-  let payments: PaymentHistoryItem[] = [];
-  if (profile.stripe_customer_id) {
-    try {
-      payments = await getPaymentHistory(profile.stripe_customer_id);
-    } catch {
-      payments = [];
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const profile = await ensureUserProfile(user);
+    const admin = createAdminSupabaseClient();
+
+    const { data: analysesRows, error: analysesError } = await admin
+      .from("analyses")
+      .select("id, created_at, contract_text, result")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (analysesError) {
+      console.error("analyses fetch:", analysesError.message);
+    }
+
+    const analyses: AnalysisHistoryItem[] = (analysesRows ?? []).map((row) => {
+      const result = row.result as ContractAnalysis;
+      return {
+        id: row.id,
+        createdAt: row.created_at,
+        contractPreview: previewText(row.contract_text),
+        contractType: result?.contractType ?? "Unknown",
+        overallRiskScore: result?.overallRiskScore ?? "medium",
+        summary: result?.summary ?? "",
+      };
+    });
+
+    let payments: PaymentHistoryItem[] = [];
+    if (profile.stripe_customer_id) {
+      try {
+        payments = await getPaymentHistory(profile.stripe_customer_id);
+      } catch {
+        payments = [];
+      }
+    }
+
+    const payload: AccountData = {
+      profile: {
+        email: profile.email ?? user.email ?? "",
+        plan: profile.plan ?? "free",
+        credits: profile.credits ?? 0,
+        isPro: profile.plan === "pro",
+        memberSince: profile.created_at,
+        hasStripeCustomer: Boolean(profile.stripe_customer_id),
+      },
+      analyses,
+      payments,
+    };
+
+    return NextResponse.json(payload);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to load account.";
+    console.error("account GET:", message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const payload: AccountData = {
-    profile: {
-      email: profile.email ?? user.email ?? "",
-      plan: profile.plan ?? "free",
-      credits: profile.credits ?? 0,
-      isPro: profile.plan === "pro",
-      memberSince: profile.created_at,
-      hasStripeCustomer: Boolean(profile.stripe_customer_id),
-    },
-    analyses,
-    payments,
-  };
-
-  return NextResponse.json(payload);
 }

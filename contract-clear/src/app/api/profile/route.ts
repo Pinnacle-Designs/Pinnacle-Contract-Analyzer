@@ -1,30 +1,27 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
+import { ensureUserProfile } from "@/lib/profile";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const profile = await ensureUserProfile(user);
+
+    return NextResponse.json({
+      plan: profile.plan,
+      credits: profile.credits,
+      isPro: profile.plan === "pro",
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Profile error.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const admin = createAdminSupabaseClient();
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("plan, credits")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) {
-    return NextResponse.json({ error: "Profile not found." }, { status: 404 });
-  }
-
-  return NextResponse.json({
-    plan: profile.plan,
-    credits: profile.credits,
-    isPro: profile.plan === "pro",
-  });
 }
