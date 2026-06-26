@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getAuthCallbackUrl } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/client";
 
 type Props = { mode: "login" | "signup" };
@@ -20,7 +21,11 @@ export function AuthForm({ mode }: Props) {
 
     const { error } =
       mode === "signup"
-        ? await supabase.auth.signUp({ email, password })
+        ? await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: getAuthCallbackUrl() },
+          })
         : await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {

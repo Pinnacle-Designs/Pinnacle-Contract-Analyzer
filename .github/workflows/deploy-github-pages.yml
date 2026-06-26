@@ -7,13 +7,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,13 +41,46 @@ jobs:
           test -f contract-clear/out/index.html
           test -f contract-clear/out/CNAME
           test -f contract-clear/out/.nojekyll
-          test -f contract-clear/out/sitemap.xml
-          echo "Build OK — $(wc -c < contract-clear/out/index.html) byte index.html"
+          echo "index.html size: $(wc -c < contract-clear/out/index.html) bytes"
 
-      - name: Deploy to gh-pages branch
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: contract-clear/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+
+  publish-branches:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: site
+
+      - name: Publish to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: contract-clear/out
+          publish_dir: ./site
           publish_branch: gh-pages
           force_orphan: true
+
+      - name: Publish to main/docs folder
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: main
+          destination_dir: docs
+          keep_files: true
