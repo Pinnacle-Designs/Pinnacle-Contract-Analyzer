@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { createPageMetadata, DEFAULT_TITLE, SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  ...createPageMetadata(),
   title: {
-    default: "ContractClear — AI Contract Analyzer",
-    template: "%s | ContractClear",
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Understand any contract in 60 seconds. Get plain-English red flags, missing clauses, and negotiation tips — no lawyer required.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

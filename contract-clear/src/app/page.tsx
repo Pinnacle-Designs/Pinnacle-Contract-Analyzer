@@ -1,10 +1,18 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/JsonLd";
 import { Logo } from "@/components/Logo";
 import { appPath } from "@/lib/app-url";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Pinnacle Contract Analyzer — Understand Any Contract in 60 Seconds",
+  path: "/",
+});
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      <JsonLd />
 
       <nav className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800/60">
         <Logo className="h-14 w-auto" />

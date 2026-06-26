@@ -33,6 +33,7 @@ jobs:
           # Empty base path — site is served at pinnaclecontractanalyzer.com (custom domain)
           GITHUB_PAGES_BASE_PATH: ""
           NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SITE_URL: https://pinnaclecontractanalyzer.com
           NEXT_PUBLIC_APP_URL: https://pinnacle-contract-analyzer.vercel.app
         run: npm ci && npm run build:gh-pages
 
