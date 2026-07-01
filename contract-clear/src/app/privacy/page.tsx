@@ -44,24 +44,32 @@ const sections = [
   {
     title: "5. Service providers",
     paragraphs: [
-      "We use trusted subprocessors to operate the Service, including hosting, authentication (Supabase), payments (Stripe), and AI inference. These providers process data on our behalf under contractual confidentiality and security obligations.",
+      "We use trusted subprocessors to operate the Service, including hosting, authentication (Supabase), payments (Stripe), AI inference, and advertising (Google AdSense on public marketing pages). These providers process data on our behalf under contractual confidentiality and security obligations.",
     ],
   },
   {
-    title: "6. Data retention",
+    title: "6. Advertising",
+    paragraphs: [
+      "Our marketing website may display third-party advertisements through Google AdSense. Ad partners may use cookies and similar technologies to serve and measure ads, subject to your cookie choices and applicable law.",
+      "We do not serve third-party display ads inside the logged-in contract analysis experience. Advertising does not affect how your contract text is analyzed.",
+      "You can learn more in our Cookie Policy and manage Google ad settings at https://adssettings.google.com.",
+    ],
+  },
+  {
+    title: "7. Data retention",
     paragraphs: [
       "We retain account and analysis history while your account is active. You may request deletion of your account and associated analyses. We may retain limited records as required for billing, security, or legal compliance.",
       "Backup copies may persist for a reasonable period after deletion.",
     ],
   },
   {
-    title: "7. Security",
+    title: "8. Security",
     paragraphs: [
       "We use industry-standard measures including encryption in transit (HTTPS), access controls, and secure infrastructure. No method of transmission or storage is 100% secure; use strong passwords and protect your credentials.",
     ],
   },
   {
-    title: "8. Your rights and choices",
+    title: "9. Your rights and choices",
     paragraphs: [
       "Depending on your location, you may have rights to access, correct, delete, or export personal data, and to object to or restrict certain processing.",
       "You can update account details in the Service or contact us at " + CONTACT_EMAIL + ". Marketing emails include an unsubscribe link where applicable.",
@@ -69,25 +77,25 @@ const sections = [
     ],
   },
   {
-    title: "9. International transfers",
+    title: "10. International transfers",
     paragraphs: [
       "We may process data in the United States and other countries where our providers operate. We use appropriate safeguards for cross-border transfers where required.",
     ],
   },
   {
-    title: "10. Children",
+    title: "11. Children",
     paragraphs: [
       "The Service is not directed to children under 18. We do not knowingly collect personal information from children. Contact us if you believe a child has provided data and we will delete it.",
     ],
   },
   {
-    title: "11. Changes",
+    title: "12. Changes",
     paragraphs: [
       "We may update this Privacy Policy from time to time. We will post the revised policy with an updated date and, where appropriate, provide additional notice.",
     ],
   },
   {
-    title: "12. Contact",
+    title: "13. Contact",
     paragraphs: [
       `Privacy inquiries: ${CONTACT_EMAIL}.`,
     ],

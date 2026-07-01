@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { MarketingAdSense } from "@/components/MarketingAdSense";
 import { tagline } from "@/lib/brand";
+import { isAdsenseConfigured } from "@/lib/adsense";
 import { LEGAL_ENTITY } from "@/lib/legal";
 
 const legalLinks = [
@@ -22,6 +24,12 @@ export function SiteFooter() {
           <p className="text-pinnacle-muted text-sm">{tagline}</p>
           <p className="text-pinnacle-muted/70 text-xs max-w-sm">
             AI-powered contract review for informational purposes only. Not legal advice.
+            {isAdsenseConfigured() ? (
+              <>
+                {" "}
+                This site may display ads from Google to support free content.
+              </>
+            ) : null}
           </p>
         </div>
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm self-start justify-center md:justify-start w-full md:w-auto">
@@ -35,6 +43,7 @@ export function SiteFooter() {
       <p className="text-center text-pinnacle-muted/50 text-xs pb-8 px-6">
         © {new Date().getFullYear()} {LEGAL_ENTITY}. All rights reserved.
       </p>
+      <MarketingAdSense />
     </footer>
   );
 }

@@ -59,51 +59,59 @@ const sections = [
     ],
   },
   {
-    title: "8. Intellectual property",
+    title: "8. Advertising",
+    paragraphs: [
+      "Our public marketing website may display advertisements served by Google AdSense. Ad revenue helps support free educational content about contract review.",
+      "Ads are not shown on logged-in application pages (dashboard, account, or analysis tools). Clicking ads is at your own discretion; we are not responsible for third-party advertiser sites.",
+      "See our Privacy Policy and Cookie Policy for how advertising partners may use cookies.",
+    ],
+  },
+  {
+    title: "9. Intellectual property",
     paragraphs: [
       "We own the Service, software, branding, and underlying technology. Analysis reports generated for you are licensed for your personal or internal business use. You may not republish our reports as a competing service or remove proprietary notices.",
     ],
   },
   {
-    title: "9. Disclaimers",
+    title: "10. Disclaimers",
     paragraphs: [
       "THE SERVICE IS PROVIDED \"AS IS\" AND \"AS AVAILABLE\" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.",
       "AI-generated outputs may contain errors or omissions. Always consult a qualified attorney before signing or relying on any contract. See our Disclaimer for additional details.",
     ],
   },
   {
-    title: "10. Limitation of liability",
+    title: "11. Limitation of liability",
     paragraphs: [
       "TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE AND OUR SUPPLIERS WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR FOR LOST PROFITS, DATA, OR BUSINESS OPPORTUNITIES, ARISING FROM YOUR USE OF THE SERVICE.",
       "OUR TOTAL LIABILITY FOR ANY CLAIM RELATING TO THE SERVICE IS LIMITED TO THE GREATER OF (A) AMOUNTS YOU PAID US IN THE TWELVE MONTHS BEFORE THE CLAIM OR (B) USD $100.",
     ],
   },
   {
-    title: "11. Indemnification",
+    title: "12. Indemnification",
     paragraphs: [
       "You agree to indemnify and hold us harmless from claims arising out of your content, misuse of the Service, or violation of these Terms.",
     ],
   },
   {
-    title: "12. Termination",
+    title: "13. Termination",
     paragraphs: [
       "You may stop using the Service at any time. We may suspend or terminate access for violations of these Terms, non-payment, fraud, or risk to the Service or other users. Upon termination, provisions that by nature should survive will remain in effect.",
     ],
   },
   {
-    title: "13. Governing law",
+    title: "14. Governing law",
     paragraphs: [
       "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict-of-law rules. Disputes will be resolved in the state or federal courts located in Delaware, unless applicable law requires otherwise.",
     ],
   },
   {
-    title: "14. Changes",
+    title: "15. Changes",
     paragraphs: [
       "We may update these Terms by posting a revised version and updating the \"Last updated\" date. Material changes may also be communicated by email or in-app notice. Continued use after changes become effective constitutes acceptance.",
     ],
   },
   {
-    title: "15. Contact",
+    title: "16. Contact",
     paragraphs: [
       `Questions about these Terms: ${CONTACT_EMAIL}.`,
     ],

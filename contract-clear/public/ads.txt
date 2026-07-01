@@ -1,0 +1,7 @@
+# Add your AdSense publisher line before applying:
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# Generate automatically:
+#   ADSENSE_PUBLISHER_ID=pub-XXXXXXXXXXXXXXXX npm run ads-txt
+#   — or —
+#   NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXX npm run ads-txt

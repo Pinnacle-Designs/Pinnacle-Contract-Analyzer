@@ -8,6 +8,7 @@
     "build": "next build",
     "build:gh-pages": "node scripts/build-github-pages.mjs",
     "sitemap": "node scripts/print-sitemap.mjs",
+    "ads-txt": "node scripts/generate-ads-txt.mjs",
     "start": "next start",
     "lint": "eslint"
   },
