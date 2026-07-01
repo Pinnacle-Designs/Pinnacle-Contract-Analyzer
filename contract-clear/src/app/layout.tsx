@@ -2,13 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import { getAdsenseClientId } from "@/lib/adsense";
+import { getAdsenseClientId, isMarketingAdSenseBuild } from "@/lib/adsense";
 import { brand } from "@/lib/brand";
 import { createPageMetadata, DEFAULT_TITLE, SITE_NAME } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const adsenseClientId = getAdsenseClientId();
+const marketingAdSense = isMarketingAdSenseBuild();
 
 export const metadata: Metadata = {
   ...createPageMetadata(),
@@ -30,6 +31,18 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {marketingAdSense && adsenseClientId ? (
+          <>
+            <meta name="google-adsense-account" content={adsenseClientId} />
+            <script
+              async
+              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+              crossOrigin="anonymous"
+            />
+          </>
+        ) : null}
+      </head>
       <body className={`${inter.className} bg-pinnacle-bg antialiased`}>
         {children}
         <SpeedInsights />

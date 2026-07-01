@@ -68,6 +68,41 @@ function isDevServerRunning() {
   return fs.existsSync(path.join(root, ".next", "dev", "lock"));
 }
 
+function injectAdSenseIntoHtml(outDir, clientId) {
+  if (!clientId?.startsWith("ca-pub-")) return;
+
+  const meta = `<meta name="google-adsense-account" content="${clientId}">`;
+  const script = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}" crossorigin="anonymous"></script>`;
+  let updated = 0;
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+        continue;
+      }
+      if (!entry.name.endsWith(".html")) continue;
+
+      let html = fs.readFileSync(full, "utf8");
+      if (html.includes("adsbygoogle.js")) continue;
+
+      if (!html.includes('name="google-adsense-account"')) {
+        html = html.replace("</head>", `${meta}\n${script}\n</head>`);
+      } else {
+        html = html.replace("</head>", `${script}\n</head>`);
+      }
+      fs.writeFileSync(full, html, "utf8");
+      updated += 1;
+    }
+  }
+
+  if (fs.existsSync(outDir)) {
+    walk(outDir);
+    console.error(`Injected AdSense into ${updated} HTML file(s) in ${outDir}`);
+  }
+}
+
 process.env.GITHUB_PAGES = "true";
 
 if (isDevServerRunning() && !process.env.CI) {
@@ -91,6 +126,12 @@ try {
   });
 
   exitCode = build.status ?? 1;
+
+  if (exitCode === 0) {
+    const clientId =
+      process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim() || "ca-pub-1014488780102797";
+    injectAdSenseIntoHtml(path.join(root, "out"), clientId);
+  }
 } finally {
   restore();
 }

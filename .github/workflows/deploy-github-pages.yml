@@ -46,6 +46,7 @@ jobs:
           test -f contract-clear/out/sitemap.xml
           test -f contract-clear/out/robots.txt
           test -f contract-clear/out/ads.txt
+          grep -q "ca-pub-1014488780102797" contract-clear/out/index.html
           echo "index.html size: $(wc -c < contract-clear/out/index.html) bytes"
 
       - uses: actions/upload-pages-artifact@v3

@@ -1,12 +1,6 @@
-import { AdSenseScript } from "@/components/AdSenseScript";
 import { CookieConsent } from "@/components/CookieConsent";
 
-/** Cookie consent + AdSense (marketing pages only, after consent). */
+/** Cookie consent banner on marketing pages (AdSense script is in root layout for verification). */
 export function MarketingAdSense() {
-  return (
-    <>
-      <CookieConsent />
-      <AdSenseScript />
-    </>
-  );
+  return <CookieConsent />;
 }
