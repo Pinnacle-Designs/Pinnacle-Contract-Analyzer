@@ -1,6 +1,7 @@
 import { SITE_NAME } from "@/lib/seo";
 
 export const LEGAL_ENTITY = "Pinnacle Contract Analyzer";
+export const BUILT_BY_ENTITY = "Pinnacle Designs LLC";
 export const CONTACT_EMAIL = "david@pinnacle-designs.com";
 export const EFFECTIVE_DATE = "June 26, 2026";
 

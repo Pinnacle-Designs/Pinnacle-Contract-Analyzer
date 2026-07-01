@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { MarketingAdSense } from "@/components/MarketingAdSense";
 import { tagline } from "@/lib/brand";
 import { isAdsenseConfigured } from "@/lib/adsense";
-import { LEGAL_ENTITY } from "@/lib/legal";
+import { BUILT_BY_ENTITY, LEGAL_ENTITY } from "@/lib/legal";
 
 const legalLinks = [
   { href: "/terms", label: "Terms" },
@@ -40,9 +40,10 @@ export function SiteFooter() {
           ))}
         </nav>
       </div>
-      <p className="text-center text-pinnacle-muted/50 text-xs pb-8 px-6">
-        © {new Date().getFullYear()} {LEGAL_ENTITY}. All rights reserved.
-      </p>
+      <div className="text-center text-pinnacle-muted/50 text-xs pb-8 px-6 space-y-1">
+        <p>© {new Date().getFullYear()} {LEGAL_ENTITY}. All rights reserved.</p>
+        <p>Built by {BUILT_BY_ENTITY}</p>
+      </div>
       <MarketingAdSense />
     </footer>
   );
