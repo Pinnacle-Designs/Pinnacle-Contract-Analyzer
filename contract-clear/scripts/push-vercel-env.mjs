@@ -76,6 +76,9 @@ for (const [key, rawValue] of Object.entries(vars)) {
   if (key === "NEXT_PUBLIC_SITE_URL") {
     value = productionMarketingUrl;
   }
+  if (key === "NEXT_PUBLIC_ADSENSE_CLIENT_ID" && isPlaceholder(value)) {
+    value = "ca-pub-1014488780102797";
+  }
 
   if (isPlaceholder(value)) {
     console.log(`Skipping ${key} — not set`);
@@ -84,6 +87,11 @@ for (const [key, rawValue] of Object.entries(vars)) {
 
   console.log(`Adding ${key} → production`);
   addEnv(key, value);
+}
+
+if (!vars.NEXT_PUBLIC_ADSENSE_CLIENT_ID || isPlaceholder(vars.NEXT_PUBLIC_ADSENSE_CLIENT_ID)) {
+  console.log("Adding NEXT_PUBLIC_ADSENSE_CLIENT_ID → production");
+  addEnv("NEXT_PUBLIC_ADSENSE_CLIENT_ID", "ca-pub-1014488780102797");
 }
 
 console.log("Done.");

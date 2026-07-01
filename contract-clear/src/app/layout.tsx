@@ -1,16 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import { getAdsenseClientId, isMarketingAdSenseBuild } from "@/lib/adsense";
+import { getAdsenseClientId, shouldIncludeAdSenseScript } from "@/lib/adsense";
 import { brand } from "@/lib/brand";
 import { createPageMetadata, DEFAULT_TITLE, SITE_NAME } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const adsenseClientId = getAdsenseClientId();
-const marketingAdSense = isMarketingAdSenseBuild();
+const includeAdSense = shouldIncludeAdSenseScript();
 
 export const metadata: Metadata = {
   ...createPageMetadata(),
@@ -32,16 +31,16 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-pinnacle-bg antialiased`}>
-        {marketingAdSense && adsenseClientId ? (
-          <Script
-            id="google-adsense"
+      <head>
+        {includeAdSense && adsenseClientId ? (
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
             crossOrigin="anonymous"
-            strategy="beforeInteractive"
           />
         ) : null}
+      </head>
+      <body className={`${inter.className} bg-pinnacle-bg antialiased`}>
         {children}
         <SpeedInsights />
       </body>

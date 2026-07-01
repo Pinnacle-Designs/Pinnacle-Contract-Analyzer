@@ -15,15 +15,13 @@ export const COOKIE_CONSENT_KEY = "pinnacle-cookie-consent";
 export const ADSENSE_CLIENT_ID = "ca-pub-1014488780102797";
 
 export function getAdsenseClientId(): string | undefined {
-  const id =
-    process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim() ||
-    (process.env.GITHUB_PAGES === "true" ? ADSENSE_CLIENT_ID : undefined);
-  return id && id.startsWith("ca-pub-") ? id : undefined;
+  const id = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim() || ADSENSE_CLIENT_ID;
+  return id.startsWith("ca-pub-") ? id : undefined;
 }
 
-/** Static GitHub Pages marketing build — AdSense script must be in HTML for Google verification. */
-export function isMarketingAdSenseBuild(): boolean {
-  return process.env.GITHUB_PAGES === "true" && Boolean(getAdsenseClientId());
+/** Include AdSense verification script in HTML (Vercel serves the apex domain). */
+export function shouldIncludeAdSenseScript(): boolean {
+  return Boolean(getAdsenseClientId());
 }
 
 /** ads.txt publisher ID (pub-XXXXXXXXXXXXXXXX). Derived from ca-pub- client id if omitted. */
