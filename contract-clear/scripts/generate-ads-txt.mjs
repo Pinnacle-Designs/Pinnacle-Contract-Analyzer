@@ -20,9 +20,7 @@ if (!pubId && client?.startsWith("ca-pub-")) {
 
 let content;
 if (pubId) {
-  content = `# Google AdSense — https://pinnaclecontractanalyzer.com/ads.txt
-google.com, ${pubId}, DIRECT, f08c47fec0942fa0
-`;
+  content = `google.com, ${pubId}, DIRECT, f08c47fec0942fa0\n`;
   console.error(`Wrote ads.txt for ${pubId}`);
 } else {
   content = `# Add your AdSense publisher line before applying:

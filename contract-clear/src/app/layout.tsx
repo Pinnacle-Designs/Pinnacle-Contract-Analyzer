@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -31,19 +32,16 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {marketingAdSense && adsenseClientId ? (
-          <>
-            <meta name="google-adsense-account" content={adsenseClientId} />
-            <script
-              async
-              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-              crossOrigin="anonymous"
-            />
-          </>
-        ) : null}
-      </head>
       <body className={`${inter.className} bg-pinnacle-bg antialiased`}>
+        {marketingAdSense && adsenseClientId ? (
+          <Script
+            id="google-adsense"
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        ) : null}
         {children}
         <SpeedInsights />
       </body>

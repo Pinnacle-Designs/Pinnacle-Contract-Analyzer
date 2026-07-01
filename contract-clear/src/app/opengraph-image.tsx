@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { SITE_NAME } from "@/lib/seo";
 
+export const dynamic = "force-static";
+
 export const alt = `${SITE_NAME} — Understand any contract in 60 seconds`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

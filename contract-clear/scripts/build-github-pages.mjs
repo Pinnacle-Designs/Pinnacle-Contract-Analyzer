@@ -75,6 +75,29 @@ function injectAdSenseIntoHtml(outDir, clientId) {
   const script = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}" crossorigin="anonymous"></script>`;
   let updated = 0;
 
+  function hasAdSenseScriptTag(html) {
+    return /<script[^>]+src=["']https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/i.test(
+      html
+    );
+  }
+
+  function injectIntoHtml(html) {
+    let next = html;
+    if (!next.includes('name="google-adsense-account"')) {
+      if (/<head[^>]*>/i.test(next)) {
+        next = next.replace(/<head([^>]*)>/i, `<head$1>${meta}`);
+      }
+    }
+    if (!hasAdSenseScriptTag(next)) {
+      if (/<head[^>]*>/i.test(next)) {
+        next = next.replace(/<head([^>]*)>/i, `<head$1>${script}`);
+      } else if (/<\/head>/i.test(next)) {
+        next = next.replace(/<\/head>/i, `${meta}${script}</head>`);
+      }
+    }
+    return next;
+  }
+
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
@@ -84,22 +107,20 @@ function injectAdSenseIntoHtml(outDir, clientId) {
       }
       if (!entry.name.endsWith(".html")) continue;
 
-      let html = fs.readFileSync(full, "utf8");
-      if (html.includes("adsbygoogle.js")) continue;
-
-      if (!html.includes('name="google-adsense-account"')) {
-        html = html.replace("</head>", `${meta}\n${script}\n</head>`);
-      } else {
-        html = html.replace("</head>", `${script}\n</head>`);
+      const html = fs.readFileSync(full, "utf8");
+      const next = injectIntoHtml(html);
+      if (next !== html) {
+        fs.writeFileSync(full, next, "utf8");
+        updated += 1;
       }
-      fs.writeFileSync(full, html, "utf8");
-      updated += 1;
     }
   }
 
   if (fs.existsSync(outDir)) {
     walk(outDir);
     console.error(`Injected AdSense into ${updated} HTML file(s) in ${outDir}`);
+  } else {
+    console.error(`AdSense injection skipped — missing output directory: ${outDir}`);
   }
 }
 
