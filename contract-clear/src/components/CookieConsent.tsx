@@ -1,30 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { COOKIE_CONSENT_KEY, isAdsenseConfigured } from "@/lib/adsense";
 
-export function CookieConsent() {
-  const [visible, setVisible] = useState(false);
+function subscribeToConsent(onStoreChange: () => void) {
+  window.addEventListener("pinnacle-consent-update", onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    window.removeEventListener("pinnacle-consent-update", onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
 
-  useEffect(() => {
-    if (!localStorage.getItem(COOKIE_CONSENT_KEY)) {
-      setVisible(true);
-    }
-  }, []);
+function getConsentSnapshot(): boolean {
+  return !localStorage.getItem(COOKIE_CONSENT_KEY);
+}
+
+function getConsentServerSnapshot(): boolean {
+  return false;
+}
+
+export function CookieConsent() {
+  const visible = useSyncExternalStore(
+    subscribeToConsent,
+    getConsentSnapshot,
+    getConsentServerSnapshot
+  );
 
   if (!visible) return null;
 
   const accept = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
     window.dispatchEvent(new Event("pinnacle-consent-update"));
-    setVisible(false);
   };
 
   const dismiss = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "essential-only");
     window.dispatchEvent(new Event("pinnacle-consent-update"));
-    setVisible(false);
   };
 
   return (

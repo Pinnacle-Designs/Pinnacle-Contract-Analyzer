@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Link from "next/link";
-import { Logo } from "@/components/Logo";
 import { AnalysisReport } from "@/components/AnalysisReport";
 import { ContractAnalysis } from "@/types/analysis";
 import { sampleContractText } from "@/lib/sampleContract";

@@ -11,7 +11,7 @@ function DashboardContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ContractAnalysis | null>(null);
-  const [successBanner, setSuccessBanner] = useState(false);
+  const [successDismissed, setSuccessDismissed] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [credits, setCredits] = useState<number | null>(null);
   const [historyRefresh, setHistoryRefresh] = useState(0);
@@ -20,14 +20,15 @@ function DashboardContent() {
   const reportRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const checkoutSuccess = searchParams.get("success") === "true";
+  const successBanner = checkoutSuccess && !successDismissed;
 
   useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setSuccessBanner(true);
-      window.history.replaceState({}, "", "/dashboard");
-      setTimeout(() => setSuccessBanner(false), 5000);
-    }
-  }, [searchParams]);
+    if (!checkoutSuccess) return;
+    window.history.replaceState({}, "", "/dashboard");
+    const timer = window.setTimeout(() => setSuccessDismissed(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [checkoutSuccess]);
 
   useEffect(() => {
     fetch("/api/profile")
@@ -39,7 +40,7 @@ function DashboardContent() {
         }
       })
       .catch(() => {});
-  }, [successBanner]);
+  }, [checkoutSuccess]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,6 +53,10 @@ function DashboardContent() {
       formData.append("file", file);
       const res = await fetch("/api/parse-pdf", { method: "POST", body: formData });
       const data = await res.json();
+      if (res.status === 401) {
+        router.push("/login");
+        return;
+      }
       if (!res.ok) {
         setError(data.error ?? "Failed to read PDF.");
         return;
@@ -90,6 +95,11 @@ function DashboardContent() {
 
       if (res.status === 403 && data.error === "EMAIL_NOT_CONFIRMED") {
         setError(data.message ?? "Confirm your email before analyzing. Check your inbox for the confirmation link.");
+        return;
+      }
+
+      if (res.status === 429) {
+        setError(data.error ?? "Too many requests. Please try again later.");
         return;
       }
 

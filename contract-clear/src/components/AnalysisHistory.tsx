@@ -17,20 +17,18 @@ function formatDate(iso: string) {
   });
 }
 
-type AnalysisHistoryProps = {
-  refreshKey?: number;
+type AnalysisHistoryListProps = {
   onSelect?: (id: string) => void;
   loadingId?: string | null;
 };
 
-export function AnalysisHistory({ refreshKey = 0, onSelect, loadingId = null }: AnalysisHistoryProps) {
+function AnalysisHistoryList({ onSelect, loadingId = null }: AnalysisHistoryListProps) {
   const [analyses, setAnalyses] = useState<AnalysisHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    let cancelled = false;
 
     fetch("/api/analyses")
       .then(async (res) => {
@@ -42,11 +40,19 @@ export function AnalysisHistory({ refreshKey = 0, onSelect, loadingId = null }: 
         return res.json() as Promise<{ analyses: AnalysisHistoryItem[] }>;
       })
       .then((data) => {
-        if (data) setAnalyses(data.analyses);
+        if (!cancelled && data) setAnalyses(data.analyses);
       })
-      .catch((e: Error) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [refreshKey]);
+      .catch((e: Error) => {
+        if (!cancelled) setError(e.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (loading) {
     return <p className="text-slate-500 text-sm">Loading history…</p>;
@@ -109,5 +115,21 @@ export function AnalysisHistory({ refreshKey = 0, onSelect, loadingId = null }: 
         );
       })}
     </ul>
+  );
+}
+
+type AnalysisHistoryProps = {
+  refreshKey?: number;
+  onSelect?: (id: string) => void;
+  loadingId?: string | null;
+};
+
+export function AnalysisHistory({ refreshKey = 0, onSelect, loadingId = null }: AnalysisHistoryProps) {
+  return (
+    <AnalysisHistoryList
+      key={refreshKey}
+      onSelect={onSelect}
+      loadingId={loadingId}
+    />
   );
 }

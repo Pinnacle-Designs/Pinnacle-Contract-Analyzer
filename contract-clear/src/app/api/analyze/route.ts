@@ -5,9 +5,9 @@ import {
   FREE_ANALYSIS_ALREADY_CLAIMED,
   normalizeEmail,
 } from "@/lib/freeAnalysis";
+import { enforceRateLimit } from "@/lib/rateLimit";
 import { ensureUserProfile } from "@/lib/profile";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
-
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
@@ -75,6 +75,14 @@ export async function POST(req: NextRequest) {
     const profile = await ensureUserProfile(user);
     const isPro = profile.plan === "pro";
     const usingFreeTierCredit = !isPro && profile.plan === "free";
+
+    const rateLimit = await enforceRateLimit(user.id, "analyze", isPro);
+    if (!rateLimit.ok) {
+      return NextResponse.json(
+        { error: "Too many analysis requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSec) } }
+      );
+    }
 
     if (usingFreeTierCredit && user.email) {
       const email = normalizeEmail(user.email);

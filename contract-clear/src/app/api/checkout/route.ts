@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { serverAppPath } from "@/lib/app-url";
 import { getStripe } from "@/lib/stripe";
 import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
 
@@ -43,8 +44,8 @@ export async function POST(req: NextRequest) {
       customer: customerId,
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+      success_url: `${serverAppPath("/dashboard")}?success=true`,
+      cancel_url: serverAppPath("/pricing"),
       metadata: { supabase_user_id: user.id },
     });
 

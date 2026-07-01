@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pinnacle Contract Analyzer
 
-## Getting Started
+AI-powered contract review for freelancers and small businesses. Dual-hosted:
 
-First, run the development server:
+| Host | URL | Purpose |
+|------|-----|---------|
+| GitHub Pages | [pinnaclecontractanalyzer.com](https://pinnaclecontractanalyzer.com) | Marketing, pricing, legal pages, AdSense |
+| Vercel | [pinnacle-contract-analyzer.vercel.app](https://pinnacle-contract-analyzer.vercel.app) | Auth, dashboard, Stripe, API routes |
+
+## Local development
 
 ```bash
+cd contract-clear
+cp .env.local.example .env.local   # fill in your keys
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If the dev server shows a blank page, stop all `next dev` processes and run:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev:reset
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Do not run `npm run build:gh-pages` while `npm run dev` is active.
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.local.example` to `.env.local`. Required for the full app:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Supabase** — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- **Anthropic** — `ANTHROPIC_API_KEY`
+- **Stripe** — secret key, webhook secret, and three price IDs
+- **URLs** — `NEXT_PUBLIC_SITE_URL` (marketing), `NEXT_PUBLIC_APP_URL` (Vercel app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Push env vars to Vercel (after filling `.env.local`):
 
-## Deploy on Vercel
+```bash
+node scripts/push-vercel-env.mjs
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supabase setup
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Run these in the Supabase SQL editor (or use `supabase/schema.sql` for a fresh project):
+
+1. `supabase/schema.sql` — profiles, analyses, free-tier enforcement
+2. `supabase/migrations/002_api_rate_limits.sql` — if upgrading an existing DB
+
+In Supabase Auth settings:
+
+- Enable **email confirmation**
+- Add redirect URLs: `https://pinnacle-contract-analyzer.vercel.app/auth/callback`
+
+## Stripe setup
+
+1. Create products/prices for single analysis, Pro monthly, and Pro annual
+2. Add webhook endpoint: `https://pinnacle-contract-analyzer.vercel.app/api/webhooks/stripe`
+3. Events: `checkout.session.completed`, `customer.subscription.deleted`
+
+## Deploy
+
+### Vercel (full app)
+
+Connect the repo with root directory `contract-clear`. Set all env vars from `.env.local.example`.
+
+### GitHub Pages (marketing)
+
+Pushes to `main` run `.github/workflows/deploy-github-pages.yml` automatically. Set these GitHub Actions env vars (or repo secrets) if using AdSense:
+
+- `NEXT_PUBLIC_ADSENSE_CLIENT_ID`
+- `ADSENSE_PUBLISHER_ID`
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run dev:reset` | Clear `.next` and restart dev |
+| `npm run build` | Production build (Vercel) |
+| `npm run build:gh-pages` | Static export for GitHub Pages |
+| `npm run lint` | ESLint |
+| `npm run sitemap` | Regenerate `public/sitemap.xml` |
+| `npm run ads-txt` | Regenerate `public/ads.txt` |
+
+## Production checklist
+
+- [ ] Supabase schema + migrations applied
+- [ ] Email confirmation enabled in Supabase
+- [ ] All Vercel env vars set (`push-vercel-env.mjs`)
+- [ ] Stripe webhook configured and tested
+- [ ] Smoke test: signup → confirm email → analyze → checkout → pro
+- [ ] AdSense: set client ID, run `npm run ads-txt`, deploy Pages
+- [ ] Google Search Console: submit sitemap
+
+## Security
+
+- `/api/analyze` and `/api/parse-pdf` require authentication
+- Per-user rate limits on analyze and PDF parsing (see `src/lib/rateLimit.ts`)
+- Ads load only on marketing pages after cookie consent
+- Security headers on Vercel deployment (see `next.config.ts`)

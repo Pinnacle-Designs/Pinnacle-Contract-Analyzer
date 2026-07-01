@@ -22,3 +22,22 @@ export function appPath(path: string): string {
 export function isStaticMarketingSite(): boolean {
   return Boolean(getAppUrl());
 }
+
+/** Origin for server-side redirects (Stripe, billing portal). Prefers the Vercel app URL. */
+export function getServerAppOrigin(): string {
+  const app = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  if (app) return app;
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (site) return site;
+
+  const vercel = process.env.VERCEL_URL?.replace(/\/$/, "");
+  if (vercel) return vercel.startsWith("http") ? vercel : `https://${vercel}`;
+
+  return "http://localhost:3000";
+}
+
+export function serverAppPath(path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${getServerAppOrigin()}${normalized}`;
+}

@@ -118,3 +118,16 @@ create policy "Users can view own analyses"
 
 create policy "Users can insert own analyses"
   on public.analyses for insert with check (auth.uid() = user_id);
+
+-- API rate limiting (abuse protection for expensive routes)
+create table public.api_rate_limits (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  endpoint text not null,
+  created_at timestamptz default now()
+);
+
+create index api_rate_limits_user_endpoint_created_idx
+  on public.api_rate_limits (user_id, endpoint, created_at desc);
+
+alter table public.api_rate_limits enable row level security;

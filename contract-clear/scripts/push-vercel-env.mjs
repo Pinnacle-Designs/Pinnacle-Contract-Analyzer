@@ -5,7 +5,8 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
-const productionUrl = "https://pinnacle-contract-analyzer.vercel.app";
+const productionAppUrl = "https://pinnacle-contract-analyzer.vercel.app";
+const productionMarketingUrl = "https://pinnaclecontractanalyzer.com";
 
 const skipKeys = new Set(["VERCEL_OIDC_TOKEN"]);
 const sensitiveKeys = new Set([
@@ -69,8 +70,11 @@ for (const [key, rawValue] of Object.entries(vars)) {
   if (skipKeys.has(key)) continue;
 
   let value = rawValue;
+  if (key === "NEXT_PUBLIC_APP_URL") {
+    value = productionAppUrl;
+  }
   if (key === "NEXT_PUBLIC_SITE_URL") {
-    value = productionUrl;
+    value = productionMarketingUrl;
   }
 
   if (isPlaceholder(value)) {

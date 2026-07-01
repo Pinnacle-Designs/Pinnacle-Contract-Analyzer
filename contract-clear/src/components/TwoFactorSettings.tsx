@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { MfaVerifyForm } from "@/components/MfaVerifyForm";
 import { createClient } from "@/lib/supabase/client";
 
 type EnrollState = {
@@ -9,6 +8,14 @@ type EnrollState = {
   qrCode: string;
   secret: string;
 };
+
+async function fetchVerifiedTotpFactor() {
+  const supabase = createClient();
+  const { data, error: listError } = await supabase.auth.mfa.listFactors();
+  if (listError) throw listError;
+  const verified = data.totp.find((f) => f.status === "verified");
+  return { enabled: Boolean(verified), factorId: verified?.id ?? null };
+}
 
 export function TwoFactorSettings() {
   const [loading, setLoading] = useState(true);
@@ -21,21 +28,20 @@ export function TwoFactorSettings() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  const loadFactors = useCallback(async () => {
-    setLoading(true);
-    const supabase = createClient();
-    const { data, error: listError } = await supabase.auth.mfa.listFactors();
+  const applyFactors = useCallback((result: { enabled: boolean; factorId: string | null }) => {
+    setEnabled(result.enabled);
+    setFactorId(result.factorId);
     setLoading(false);
-
-    if (listError) {
-      setError(listError.message);
-      return;
-    }
-
-    const verified = data.totp.find((f) => f.status === "verified");
-    setEnabled(Boolean(verified));
-    setFactorId(verified?.id ?? null);
   }, []);
+
+  const loadFactors = useCallback(() => {
+    fetchVerifiedTotpFactor()
+      .then(applyFactors)
+      .catch((e: Error) => {
+        setError(e.message);
+        setLoading(false);
+      });
+  }, [applyFactors]);
 
   useEffect(() => {
     loadFactors();
@@ -82,7 +88,7 @@ export function TwoFactorSettings() {
     setEnroll(null);
     setEnrollCode("");
     setMessage("Two-factor authentication is now enabled.");
-    await loadFactors();
+    loadFactors();
   };
 
   const cancelEnroll = async () => {
@@ -134,7 +140,7 @@ export function TwoFactorSettings() {
     setDisabling(false);
     setDisableCode("");
     setMessage("Two-factor authentication has been disabled.");
-    await loadFactors();
+    loadFactors();
   };
 
   const inputClass =

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { appPath, isStaticMarketingSite } from "@/lib/app-url";
+import { redirectTo } from "@/lib/navigation";
 
 const singleFeatures = [
   "1 full contract analysis",
@@ -89,6 +91,7 @@ function PlanAccordion({ features }: { features: string[] }) {
 
 export default function PricingPage() {
   const staticSite = isStaticMarketingSite();
+  const router = useRouter();
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +114,7 @@ export default function PricingPage() {
       const data = await res.json();
 
       if (res.status === 401) {
-        window.location.href = "/login";
+        router.push(appPath("/login"));
         return;
       }
 
@@ -121,7 +124,7 @@ export default function PricingPage() {
       }
 
       if (data.url) {
-        window.location.href = data.url;
+        redirectTo(data.url);
       }
     } catch {
       setError("Network error. Please try again.");
