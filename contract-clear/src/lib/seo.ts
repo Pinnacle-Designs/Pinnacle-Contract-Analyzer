@@ -59,7 +59,6 @@ export function canonicalUrl(path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   const clean = normalized.replace(/\/$/, "");
 
-  // Files like sitemap.xml, robots.txt, opengraph-image.png — no trailing slash
   if (/\.[a-z0-9]+$/i.test(clean)) {
     return `${base}${clean}`;
   }
@@ -71,36 +70,53 @@ export function absoluteUrl(path: string): string {
   return canonicalUrl(path);
 }
 
-/** Sitemap entry URLs (trailing slash on GitHub Pages static export). */
 export function sitemapUrl(path: string): string {
   return canonicalUrl(path);
 }
 
 type PageMetadataOptions = {
   title?: string;
+  /** When true, `title` is used verbatim (no `%s | Site` template). */
+  absoluteTitle?: boolean;
   description?: string;
   path?: string;
-  /** When false, adds noindex (login, dashboard, previews). */
   index?: boolean;
-  /** Override default OG/Twitter image path. */
   ogImage?: string;
+  keywords?: string[];
 };
 
 export function createPageMetadata({
   title,
+  absoluteTitle = false,
   description = SITE_DESCRIPTION,
   path = "/",
   index = true,
   ogImage,
+  keywords,
 }: PageMetadataOptions = {}): Metadata {
   const canonical = canonicalUrl(path);
   const pageTitle = title ?? DEFAULT_TITLE;
   const imageUrl = ogImageUrl(ogImage);
+  const metaKeywords = keywords?.length ? keywords : SITE_KEYWORDS;
+
+  const verification: Metadata["verification"] = {};
+  if (process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) {
+    verification.google = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+  }
+  if (process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION) {
+    verification.other = {
+      "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION,
+    };
+  }
 
   return {
-    title: title ? { absolute: pageTitle } : undefined,
+    title: title
+      ? absoluteTitle
+        ? { absolute: pageTitle }
+        : pageTitle
+      : undefined,
     description,
-    keywords: SITE_KEYWORDS,
+    keywords: metaKeywords,
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: getMarketingSiteUrl() }],
     creator: SITE_NAME,
@@ -109,6 +125,11 @@ export function createPageMetadata({
     alternates: {
       canonical,
       languages: { "en-US": canonical },
+    },
+    formatDetection: {
+      telephone: false,
+      email: false,
+      address: false,
     },
     robots: index
       ? {
@@ -119,6 +140,7 @@ export function createPageMetadata({
             follow: true,
             "max-image-preview": "large",
             "max-snippet": -1,
+            "max-video-preview": -1,
           },
         }
       : { index: false, follow: false, nocache: true },
@@ -149,7 +171,13 @@ export function createPageMetadata({
       icon: "/logo.png",
       apple: "/logo.png",
     },
+    appleWebApp: {
+      capable: true,
+      title: SITE_SHORT_NAME,
+      statusBarStyle: "black-translucent",
+    },
     category: "technology",
+    ...(Object.keys(verification).length > 0 ? { verification } : {}),
   };
 }
 

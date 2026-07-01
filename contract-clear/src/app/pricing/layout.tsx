@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/BreadcrumbJsonLd";
 import { PricingJsonLd } from "@/components/PricingJsonLd";
-import { createPageMetadata } from "@/lib/seo";
+import { SITE_NAME } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = createPageMetadata({
-  title: "Pricing — $7 per Contract or $19/mo Pro",
-  description:
-    "Review any contract for $7, or get unlimited analyses with Pro for $19/month. Plain-English red flags, risk scores, and negotiation scripts — cheaper than one hour of a lawyer.",
-  path: "/pricing",
-});
+export const metadata: Metadata = pageMetadata("pricing");
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <PricingJsonLd />
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: SITE_NAME, path: "/" },
+          { name: "Pricing", path: "/pricing" },
+        ]}
+      />
       {children}
     </>
   );

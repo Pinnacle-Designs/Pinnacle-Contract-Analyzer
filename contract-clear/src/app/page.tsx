@@ -6,13 +6,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { appPath } from "@/lib/app-url";
-import { createPageMetadata, DEFAULT_TITLE, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata = createPageMetadata({
-  title: DEFAULT_TITLE,
-  description: SITE_DESCRIPTION,
-  path: "/",
-});
+export const metadata = pageMetadata("home");
 
 const stats = [
   { stat: "60 sec", label: "Average analysis time" },

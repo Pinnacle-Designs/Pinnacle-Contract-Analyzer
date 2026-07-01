@@ -1,10 +1,12 @@
 import { FAQ_ITEMS } from "@/lib/faq";
 import { CONTACT_EMAIL, LEGAL_ENTITY } from "@/lib/legal";
+import { appPath } from "@/lib/app-url";
 import { absoluteUrl, ogImageUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
 export function JsonLd() {
   const siteUrl = absoluteUrl("/");
   const organizationId = `${siteUrl}#organization`;
+  const signupUrl = appPath("/signup") || absoluteUrl("/pricing");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -17,12 +19,15 @@ export function JsonLd() {
         logo: {
           "@type": "ImageObject",
           url: ogImageUrl("/logo.png"),
+          width: 512,
+          height: 512,
         },
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "customer support",
           email: CONTACT_EMAIL,
           availableLanguage: "English",
+          url: absoluteUrl("/contact"),
         },
       },
       {
@@ -33,12 +38,25 @@ export function JsonLd() {
         description: SITE_DESCRIPTION,
         inLanguage: "en-US",
         publisher: { "@id": organizationId },
+        potentialAction: {
+          "@type": "RegisterAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: signupUrl,
+            actionPlatform: [
+              "http://schema.org/DesktopWebPlatform",
+              "http://schema.org/MobileWebPlatform",
+            ],
+          },
+          name: "Create free account",
+        },
       },
       {
         "@type": "SoftwareApplication",
         "@id": `${siteUrl}#app`,
         name: SITE_NAME,
         applicationCategory: "BusinessApplication",
+        applicationSubCategory: "Legal Tech",
         operatingSystem: "Web",
         url: siteUrl,
         description: SITE_DESCRIPTION,

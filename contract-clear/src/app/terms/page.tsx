@@ -1,12 +1,8 @@
 import { LegalLayout } from "@/components/LegalLayout";
 import { CONTACT_EMAIL, legalIntro } from "@/lib/legal";
-import { createPageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata = createPageMetadata({
-  title: "Terms of Service",
-  description: "Terms and conditions for using Pinnacle Contract Analyzer.",
-  path: "/terms",
-});
+export const metadata = pageMetadata("terms");
 
 const sections = [
   {
@@ -118,6 +114,7 @@ export default function TermsPage() {
   return (
     <LegalLayout
       title="Terms of Service"
+      path="/terms"
       description="These terms govern your access to and use of Pinnacle Contract Analyzer, including free and paid plans."
       sections={sections}
     />

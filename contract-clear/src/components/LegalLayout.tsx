@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { legalBreadcrumbs } from "@/components/BreadcrumbJsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EFFECTIVE_DATE } from "@/lib/legal";
@@ -12,12 +13,14 @@ type Section = {
 type LegalLayoutProps = {
   title: string;
   description: string;
+  path: string;
   sections: Section[];
 };
 
-export function LegalLayout({ title, description, sections }: LegalLayoutProps) {
+export function LegalLayout({ title, description, path, sections }: LegalLayoutProps) {
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col">
+      {legalBreadcrumbs(title, path)}
       <SiteHeader variant="minimal" />
 
       <article className="max-w-3xl mx-auto w-full px-6 py-12 flex-1">

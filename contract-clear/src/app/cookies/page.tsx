@@ -1,12 +1,8 @@
 import { LegalLayout } from "@/components/LegalLayout";
 import { CONTACT_EMAIL, legalIntro } from "@/lib/legal";
-import { createPageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata = createPageMetadata({
-  title: "Cookie Policy",
-  description: "How Pinnacle Contract Analyzer uses cookies and similar technologies.",
-  path: "/cookies",
-});
+export const metadata = pageMetadata("cookies");
 
 const sections = [
   {
@@ -61,6 +57,7 @@ export default function CookiesPage() {
   return (
     <LegalLayout
       title="Cookie Policy"
+      path="/cookies"
       description="This policy explains how we use cookies and related technologies on our website and application."
       sections={sections}
     />

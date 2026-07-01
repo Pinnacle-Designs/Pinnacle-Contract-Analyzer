@@ -1,12 +1,8 @@
 import { LegalLayout } from "@/components/LegalLayout";
 import { CONTACT_EMAIL, legalIntro } from "@/lib/legal";
-import { createPageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata = createPageMetadata({
-  title: "Disclaimer",
-  description: "Important limitations regarding AI contract analysis from Pinnacle Contract Analyzer.",
-  path: "/disclaimer",
-});
+export const metadata = pageMetadata("disclaimer");
 
 const sections = [
   {
@@ -62,6 +58,7 @@ export default function DisclaimerPage() {
   return (
     <LegalLayout
       title="Disclaimer"
+      path="/disclaimer"
       description="Please read this carefully. Our AI analyses are helpful starting points—not substitutes for professional legal review."
       sections={sections}
     />

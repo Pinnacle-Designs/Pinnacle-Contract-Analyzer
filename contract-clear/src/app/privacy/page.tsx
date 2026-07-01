@@ -1,12 +1,8 @@
 import { LegalLayout } from "@/components/LegalLayout";
 import { CONTACT_EMAIL, legalIntro } from "@/lib/legal";
-import { createPageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata = createPageMetadata({
-  title: "Privacy Policy",
-  description: "How Pinnacle Contract Analyzer collects, uses, and protects your data.",
-  path: "/privacy",
-});
+export const metadata = pageMetadata("privacy");
 
 const sections = [
   {
@@ -102,6 +98,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy Policy"
+      path="/privacy"
       description="We take your privacy seriously. This policy describes how we handle personal information and contract data you provide."
       sections={sections}
     />
