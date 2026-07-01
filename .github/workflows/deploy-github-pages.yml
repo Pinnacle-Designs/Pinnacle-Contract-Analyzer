@@ -34,6 +34,7 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: ""
           NEXT_PUBLIC_SITE_URL: https://pinnaclecontractanalyzer.com
           NEXT_PUBLIC_APP_URL: https://pinnacle-contract-analyzer.vercel.app
+          NEXT_PUBLIC_ADSENSE_CLIENT_ID: ca-pub-1014488780102797
           SITEMAP_LAST_MODIFIED: ${{ github.event.repository.updated_at }}
         run: npm ci && npm run sitemap && npm run ads-txt && npm run build:gh-pages
 
